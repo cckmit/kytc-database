@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kytc.database.dao.mapper.DatabaseConfigMapper">
+	<resultMap id="BaseResultMap" type="com.kytc.database.dao.data.DatabaseConfigData">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="database_name" jdbcType="VARCHAR" property="databaseName" />
+		<result column="database_description" jdbcType="VARCHAR" property="databaseDescription" />
+		<result column="database_url" jdbcType="VARCHAR" property="databaseUrl" />
+		<result column="database_username" jdbcType="VARCHAR" property="databaseUsername" />
+		<result column="database_password" jdbcType="VARCHAR" property="databasePassword" />
+		<result column="is_deleted" jdbcType="BIT" property="isDeleted" />
+		<result column="created_by" jdbcType="VARCHAR" property="createdBy" />
+		<result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+		<result column="updated_by" jdbcType="VARCHAR" property="updatedBy" />
+		<result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id,database_name,database_description,database_url,database_username,database_password,is_deleted,created_by,created_at,updated_by,updated_at
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List" />
+		from t_database_config
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from t_database_config
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.kytc.database.dao.data.DatabaseConfigData">
+		insert into t_database_config (
+			id,database_name,database_description,database_url,database_username,database_password,is_deleted,created_by,created_at,updated_by,updated_at
+		) 
+		values (
+			#{id,jdbcType=BIGINT},#{databaseName,jdbcType=VARCHAR},#{databaseDescription,jdbcType=VARCHAR},#{databaseUrl,jdbcType=VARCHAR},#{databaseUsername,jdbcType=VARCHAR},#{databasePassword,jdbcType=VARCHAR},#{isDeleted,jdbcType=BIT},#{createdBy,jdbcType=VARCHAR},#{createdAt,jdbcType=TIMESTAMP},#{updatedBy,jdbcType=VARCHAR},#{updatedAt,jdbcType=TIMESTAMP}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.kytc.database.dao.data.DatabaseConfigData">
+		insert into t_database_config
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="databaseName != null">
+				database_name,
+			</if>
+			<if test="databaseDescription != null">
+				database_description,
+			</if>
+			<if test="databaseUrl != null">
+				database_url,
+			</if>
+			<if test="databaseUsername != null">
+				database_username,
+			</if>
+			<if test="databasePassword != null">
+				database_password,
+			</if>
+			<if test="isDeleted != null">
+				is_deleted,
+			</if>
+			<if test="createdBy != null">
+				created_by,
+			</if>
+			<if test="createdAt != null">
+				created_at,
+			</if>
+			<if test="updatedBy != null">
+				updated_by,
+			</if>
+			<if test="updatedAt != null">
+				updated_at,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="databaseName != null">
+				#{databaseName,jdbcType=VARCHAR},
+			</if>
+			<if test="databaseDescription != null">
+				#{databaseDescription,jdbcType=VARCHAR},
+			</if>
+			<if test="databaseUrl != null">
+				#{databaseUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="databaseUsername != null">
+				#{databaseUsername,jdbcType=VARCHAR},
+			</if>
+			<if test="databasePassword != null">
+				#{databasePassword,jdbcType=VARCHAR},
+			</if>
+			<if test="isDeleted != null">
+				#{isDeleted,jdbcType=BIT},
+			</if>
+			<if test="createdBy != null">
+				#{createdBy,jdbcType=VARCHAR},
+			</if>
+			<if test="createdAt != null">
+				#{createdAt,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatedBy != null">
+				#{updatedBy,jdbcType=VARCHAR},
+			</if>
+			<if test="updatedAt != null">
+				#{updatedAt,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.kytc.database.dao.data.DatabaseConfigData">
+		update t_database_config
+		<set>
+			<if test="id != null">
+				id = #{id,jdbcType=BIGINT},
+			</if>
+			<if test="databaseName != null">
+				database_name = #{databaseName,jdbcType=VARCHAR},
+			</if>
+			<if test="databaseDescription != null">
+				database_description = #{databaseDescription,jdbcType=VARCHAR},
+			</if>
+			<if test="databaseUrl != null">
+				database_url = #{databaseUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="databaseUsername != null">
+				database_username = #{databaseUsername,jdbcType=VARCHAR},
+			</if>
+			<if test="databasePassword != null">
+				database_password = #{databasePassword,jdbcType=VARCHAR},
+			</if>
+			<if test="isDeleted != null">
+				is_deleted = #{isDeleted,jdbcType=BIT},
+			</if>
+			<if test="createdBy != null">
+				created_by = #{createdBy,jdbcType=VARCHAR},
+			</if>
+			<if test="createdAt != null">
+				created_at = #{createdAt,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updatedBy != null">
+				updated_by = #{updatedBy,jdbcType=VARCHAR},
+			</if>
+			<if test="updatedAt != null">
+				updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		<where>id = #{id,jdbcType=BIGINT}</where>
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.kytc.database.dao.data.DatabaseConfigData">
+		update t_database_config
+		set 
+			id = #{id,jdbcType=BIGINT},
+			database_name = #{databaseName,jdbcType=VARCHAR},
+			database_description = #{databaseDescription,jdbcType=VARCHAR},
+			database_url = #{databaseUrl,jdbcType=VARCHAR},
+			database_username = #{databaseUsername,jdbcType=VARCHAR},
+			database_password = #{databasePassword,jdbcType=VARCHAR},
+			is_deleted = #{isDeleted,jdbcType=BIT},
+			created_by = #{createdBy,jdbcType=VARCHAR},
+			created_at = #{createdAt,jdbcType=TIMESTAMP},
+			updated_by = #{updatedBy,jdbcType=VARCHAR},
+			updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+		where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

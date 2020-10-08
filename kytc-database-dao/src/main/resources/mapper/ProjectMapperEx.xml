@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kytc.database.dao.mapper.ProjectMapperEx">
+	<sql id="queryCondition">
+		<where>
+			<if test="language != null ">
+				and language = #{language,jdbcType=VARCHAR}
+			</if>
+			<if test="projectKey != null ">
+				and project_key = #{projectKey,jdbcType=VARCHAR}
+			</if>
+			<if test="projectType != null ">
+				and project_type = #{projectType,jdbcType=VARCHAR}
+			</if>
+			<if test="projectName != null ">
+				and project_name = #{projectName,jdbcType=VARCHAR}
+			</if>
+			<if test="portNum != null ">
+				and port_num = #{portNum,jdbcType=SMALLINT}
+			</if>
+			<if test="databaseName != null ">
+				and database_name = #{databaseName,jdbcType=VARCHAR}
+			</if>
+			<if test="gitUrl != null ">
+				and git_url = #{gitUrl,jdbcType=VARCHAR}
+			</if>
+			<if test="owner != null ">
+				and owner = #{owner,jdbcType=VARCHAR}
+			</if>
+			<if test="member != null ">
+				and member = #{member,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</sql>
+	<select id="listByCondition" resultMap="com.kytc.database.dao.mapper.ProjectMapper.BaseResultMap">
+		select 
+		<include refid="com.kytc.database.dao.mapper.ProjectMapper.Base_Column_List"></include>
+		from t_project
+			<include refid="queryCondition"></include>
+			order by updated_at desc
+			limit #{start},#{limit}
+	</select>
+	<select id="countByCondition" resultType="Long">
+		select
+			count(1)
+		from t_project
+		<include refid="queryCondition"></include>
+	</select>
+	<select id="getMaxPortNum" resultType="Integer">
+		select
+			max(port_num)
+		from t_project
+	</select>
+</mapper>

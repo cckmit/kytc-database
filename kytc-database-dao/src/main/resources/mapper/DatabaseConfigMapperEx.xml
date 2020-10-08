@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kytc.database.dao.mapper.DatabaseConfigMapperEx">
+	<sql id="queryCondition">
+		<where>
+			<if test="databaseName != null ">
+				and database_name = #{databaseName,jdbcType=VARCHAR}
+			</if>
+			<if test="databaseDescription != null ">
+				and database_description = #{databaseDescription,jdbcType=VARCHAR}
+			</if>
+			<if test="databaseUrl != null ">
+				and database_url = #{databaseUrl,jdbcType=VARCHAR}
+			</if>
+			<if test="databaseUsername != null ">
+				and database_username = #{databaseUsername,jdbcType=VARCHAR}
+			</if>
+			<if test="databasePassword != null ">
+				and database_password = #{databasePassword,jdbcType=VARCHAR}
+			</if>
+			<if test="isDeleted != null ">
+				and is_deleted = #{isDeleted,jdbcType=BIT}
+			</if>
+			and is_deleted = 0
+		</where>
+	</sql>
+	<select id="listByCondition" resultMap="com.kytc.database.dao.mapper.DatabaseConfigMapper.BaseResultMap">
+		select 
+		<include refid="com.kytc.database.dao.mapper.DatabaseConfigMapper.Base_Column_List"></include>
+		from t_database_config
+		<include refid="queryCondition"></include>
+		order by last_updated_at desc
+		<if test="limit != -1">
+			limit #{start},#{limit}
+		</if>
+	</select>
+	<select id="countByCondition" resultType="Long">
+		select
+			count(1)
+		from t_database_config
+		<include refid="queryCondition"></include>
+	</select>
+	<select id="getByDatabaseName" resultMap="com.kytc.database.dao.mapper.DatabaseConfigMapper.BaseResultMap">
+		select
+		<include refid="com.kytc.database.dao.mapper.DatabaseConfigMapper.Base_Column_List"></include>
+		from t_database_config
+		where database_name = #{databaseName,jdbcType=VARCHAR}
+		and is_deleted = 0;
+	</select>
+</mapper>

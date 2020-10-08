@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kytc.database.dao.mapper.ColumnMapper">
+	<resultMap id="columnDTO" type="com.kytc.database.dao.dto.ColumnDTO">
+		<result column="TABLE_CATALOG" property="tableCatalog" />  
+		<result column="TABLE_SCHEMA" property="tableSchema"/>
+		<result column="TABLE_NAME" property="tableName" />  
+		<result column="COLUMN_NAME" property="columnName" />  
+		<result column="ORDINAL_POSITION" property="ordinalPosition" />  
+		<result column="COLUMN_DEFAULT" property="columnDefault" />  
+		<result column="IS_NULLABLE" property="nullable" />  
+		<result column="DATA_TYPE" property="dataType" />  
+		<result column="CHARACTER_MAXIMUM_LENGTH" property="characterMaximumLength" />  
+		<result column="CHARACTER_OCTET_LENGTH" property="characterOctetLength" />  
+		<result column="NUMERIC_PRECISION" property="numericPrecision" />  
+		<result column="NUMERIC_SCALE" property="numericScale" />  
+		<result column="DATETIME_PRECISION" property="datetimePrecision" />  
+		<result column="CHARACTER_SET_NAME" property="characterSetName" />  
+		<result column="COLLATION_NAME" property="collationName" />  
+		<result column="COLUMN_TYPE" property="columnType" />  
+		<result column="COLUMN_KEY" property="columnKey" />  
+		<result column="EXTRA" property="extra" />  
+		<result column="PRIVILEGES" property="privileges" />  
+		<result column="COLUMN_COMMENT" property="columnComment" />  
+	</resultMap>  
+	<select id="list" resultMap="columnDTO" parameterType="String">
+	  	SELECT 
+	  		*  
+	  	from 
+	  		information_schema.COLUMNS 
+	  	where 
+	  		TABLE_SCHEMA = #{database} 
+	  		and TABLE_NAME = #{tableName} 
+	  		ORDER BY ORDINAL_POSITION asc 
+	</select>
+	<select id="getColumn" resultType="String" parameterType="String">
+	  	SELECT 
+	  		COLUMN_NAME 
+	  	from 
+	  		information_schema.TABLES 
+	  	where 
+	  		TABLE_SCHEMA = #{database} 
+	  		and TABLE_NAME = #{tableName} 
+	  		ORDER BY ORDINAL_POSITION asc 
+	</select>
+</mapper>

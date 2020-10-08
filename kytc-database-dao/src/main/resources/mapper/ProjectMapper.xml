@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kytc.database.dao.mapper.ProjectMapper">
+	<resultMap id="BaseResultMap" type="com.kytc.database.dao.data.ProjectData">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="language" jdbcType="VARCHAR" property="language" />
+		<result column="project_key" jdbcType="VARCHAR" property="projectKey" />
+		<result column="project_type" jdbcType="VARCHAR" property="projectType" />
+		<result column="project_name" jdbcType="VARCHAR" property="projectName" />
+		<result column="port_num" jdbcType="SMALLINT" property="portNum" />
+		<result column="database_name" jdbcType="VARCHAR" property="databaseName" />
+		<result column="git_url" jdbcType="VARCHAR" property="gitUrl" />
+		<result column="owner" jdbcType="VARCHAR" property="owner" />
+		<result column="member" jdbcType="VARCHAR" property="member" />
+		<result column="created_by" jdbcType="VARCHAR" property="createdBy" />
+		<result column="created_at" jdbcType="DATE" property="createdAt" />
+		<result column="updated_by" jdbcType="VARCHAR" property="updatedBy" />
+		<result column="updated_at" jdbcType="DATE" property="updatedAt" />
+	</resultMap>
+	<sql id="Base_Column_List">
+		id,language,project_key,project_type,project_name,port_num,database_name,git_url,owner,member,created_by,created_at,updated_by,updated_at
+	</sql>
+	<select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List" />
+		from t_project
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+		delete from t_project
+		where id = #{id,jdbcType=BIGINT}
+	</delete>
+	<insert id="insert" parameterType="com.kytc.database.dao.data.ProjectData">
+		insert into t_project (
+			id,language,project_key,project_type,project_name,port_num,database_name,git_url,owner,member,created_by,created_at,updated_by,updated_at
+		) 
+		values (
+			#{id,jdbcType=BIGINT},#{language,jdbcType=VARCHAR},#{projectKey,jdbcType=VARCHAR},#{projectType,jdbcType=VARCHAR},#{projectName,jdbcType=VARCHAR},#{portNum,jdbcType=SMALLINT},#{databaseName,jdbcType=VARCHAR},#{gitUrl,jdbcType=VARCHAR},#{owner,jdbcType=VARCHAR},#{member,jdbcType=VARCHAR},#{createdBy,jdbcType=VARCHAR},#{createdAt,jdbcType=DATE},#{updatedBy,jdbcType=VARCHAR},#{updatedAt,jdbcType=DATE}
+		)
+	</insert>
+	<insert id="insertSelective" parameterType="com.kytc.database.dao.data.ProjectData">
+		insert into t_project
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="language != null">
+				language,
+			</if>
+			<if test="projectKey != null">
+				project_key,
+			</if>
+			<if test="projectType != null">
+				project_type,
+			</if>
+			<if test="projectName != null">
+				project_name,
+			</if>
+			<if test="portNum != null">
+				port_num,
+			</if>
+			<if test="databaseName != null">
+				database_name,
+			</if>
+			<if test="gitUrl != null">
+				git_url,
+			</if>
+			<if test="owner != null">
+				owner,
+			</if>
+			<if test="member != null">
+				member,
+			</if>
+			<if test="createdBy != null">
+				created_by,
+			</if>
+			<if test="createdAt != null">
+				created_at,
+			</if>
+			<if test="updatedBy != null">
+				updated_by,
+			</if>
+			<if test="updatedAt != null">
+				updated_at,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=BIGINT},
+			</if>
+			<if test="language != null">
+				#{language,jdbcType=VARCHAR},
+			</if>
+			<if test="projectKey != null">
+				#{projectKey,jdbcType=VARCHAR},
+			</if>
+			<if test="projectType != null">
+				#{projectType,jdbcType=VARCHAR},
+			</if>
+			<if test="projectName != null">
+				#{projectName,jdbcType=VARCHAR},
+			</if>
+			<if test="portNum != null">
+				#{portNum,jdbcType=SMALLINT},
+			</if>
+			<if test="databaseName != null">
+				#{databaseName,jdbcType=VARCHAR},
+			</if>
+			<if test="gitUrl != null">
+				#{gitUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="owner != null">
+				#{owner,jdbcType=VARCHAR},
+			</if>
+			<if test="member != null">
+				#{member,jdbcType=VARCHAR},
+			</if>
+			<if test="createdBy != null">
+				#{createdBy,jdbcType=VARCHAR},
+			</if>
+			<if test="createdAt != null">
+				#{createdAt,jdbcType=DATE},
+			</if>
+			<if test="updatedBy != null">
+				#{updatedBy,jdbcType=VARCHAR},
+			</if>
+			<if test="updatedAt != null">
+				#{updatedAt,jdbcType=DATE},
+			</if>
+		</trim>
+	</insert>
+	<update id="updateByPrimaryKeySelective" parameterType="com.kytc.database.dao.data.ProjectData">
+		update t_project
+		<set>
+			<if test="id != null">
+				id = #{id,jdbcType=BIGINT},
+			</if>
+			<if test="language != null">
+				language = #{language,jdbcType=VARCHAR},
+			</if>
+			<if test="projectKey != null">
+				project_key = #{projectKey,jdbcType=VARCHAR},
+			</if>
+			<if test="projectType != null">
+				project_type = #{projectType,jdbcType=VARCHAR},
+			</if>
+			<if test="projectName != null">
+				project_name = #{projectName,jdbcType=VARCHAR},
+			</if>
+			<if test="portNum != null">
+				port_num = #{portNum,jdbcType=SMALLINT},
+			</if>
+			<if test="databaseName != null">
+				database_name = #{databaseName,jdbcType=VARCHAR},
+			</if>
+			<if test="gitUrl != null">
+				git_url = #{gitUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="owner != null">
+				owner = #{owner,jdbcType=VARCHAR},
+			</if>
+			<if test="member != null">
+				member = #{member,jdbcType=VARCHAR},
+			</if>
+			<if test="createdBy != null">
+				created_by = #{createdBy,jdbcType=VARCHAR},
+			</if>
+			<if test="createdAt != null">
+				created_at = #{createdAt,jdbcType=DATE},
+			</if>
+			<if test="updatedBy != null">
+				updated_by = #{updatedBy,jdbcType=VARCHAR},
+			</if>
+			<if test="updatedAt != null">
+				updated_at = #{updatedAt,jdbcType=DATE},
+			</if>
+		</set>
+		<where>id = #{id,jdbcType=BIGINT}</where>
+	</update>
+	<update id="updateByPrimaryKey" parameterType="com.kytc.database.dao.data.ProjectData">
+		update t_project
+		set 
+			id = #{id,jdbcType=BIGINT},
+			language = #{language,jdbcType=VARCHAR},
+			project_key = #{projectKey,jdbcType=VARCHAR},
+			project_type = #{projectType,jdbcType=VARCHAR},
+			project_name = #{projectName,jdbcType=VARCHAR},
+			port_num = #{portNum,jdbcType=SMALLINT},
+			database_name = #{databaseName,jdbcType=VARCHAR},
+			git_url = #{gitUrl,jdbcType=VARCHAR},
+			owner = #{owner,jdbcType=VARCHAR},
+			member = #{member,jdbcType=VARCHAR},
+			created_by = #{createdBy,jdbcType=VARCHAR},
+			created_at = #{createdAt,jdbcType=DATE},
+			updated_by = #{updatedBy,jdbcType=VARCHAR},
+			updated_at = #{updatedAt,jdbcType=DATE}
+		where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

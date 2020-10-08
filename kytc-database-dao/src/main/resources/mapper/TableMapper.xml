@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kytc.database.dao.mapper.TableMapper">
+	<resultMap id="tableDTO" type="com.kytc.database.dao.dto.TableDTO">
+		<result column="TABLE_CATALOG" property="tableCatalog" />  
+		<result column="TABLE_SCHEMA" property="tableSchema"/>
+		<result column="TABLE_NAME" property="tableName" />  
+		<result column="TABLE_TYPE" property="tableType" />  
+		<result column="ENGINE" property="engine" />  
+		<result column="VERSION" property="version" />  
+		<result column="ROW_FORMAT" property="rowFormat" />  
+		<result column="TABLE_ROWS" property="tableRows" />  
+		<result column="AVG_ROW_LENGTH" property="avgRowLength" />  
+		<result column="DATA_LENGTH" property="dataLength" />  
+		<result column="MAX_DATA_LENGTH" property="maxDataLength" />  
+		<result column="INDEX_LENGTH" property="indexLength" />  
+		<result column="DATA_FREE" property="dataFree" />  
+		<result column="AUTO_INCREMENT" property="autoIncrement" />  
+		<result column="CREATE_TIME" property="createTime" />  
+		<result column="UPDATE_TIME" property="updateTime" />  
+		<result column="CHECK_TIME" property="checkTime" />  
+		<result column="TABLE_COLLATION" property="tableCollation" />  
+		<result column="CHECKSUM" property="checksum" />  
+		<result column="CREATE_OPTIONS" property="createOptions" />  
+		<result column="TABLE_COMMENT" property="tableComment" />  
+	</resultMap>  
+	<select id="list" resultType="String" parameterType="String">
+	  	SELECT 
+	  		TABLE_NAME 
+	  	from 
+	  		information_schema.TABLES 
+	  	where 
+	  		TABLE_SCHEMA = #{database} 
+	  		and (TABLE_TYPE = 'BASE TABLE' or TABLE_TYPE='SYSTEM VIEW')
+	</select>
+	<select id="detail" resultMap="tableDTO" parameterType="String">
+	  	SELECT 
+	  		*  
+	  	from 
+	  		information_schema.TABLES 
+	  	where 
+	  		TABLE_SCHEMA = #{database} 
+	  		and TABLE_NAME = #{tableName}
+	</select>
+	<select id="dataList" resultType="java.util.Map" parameterType="com.kytc.database.dao.vo.TableVO">
+	  	SELECT 
+	  		*  
+	  	from 
+	  		${database}.${tableName}  
+	  	where 
+	  		1 = 1
+	  		<if test="columnName!=null and columnValue!=null">
+	  			and ${columnName} = #{columnValue}
+	  		</if> 
+	  		<if test="sort!=null and order!=null">
+	  			order by ${sort} ${order}
+	  		</if> 
+	  		limit #{start},#{rows}
+	</select>
+	<select id="dataCount" resultType="Long" parameterType="com.kytc.database.dao.vo.TableVO">
+	  	SELECT 
+	  		count(1)   
+	  	from 
+	  		${database}.${tableName}  
+	  	where 
+	  		1 = 1
+	  		<if test="columnName!=null and columnValue!=null">
+	  			and ${columnName} = #{columnValue}
+	  		</if> 
+	</select>
+	<select id="dataDetail" resultType="java.util.Map" parameterType="String">
+	  	SELECT 
+	  		*    
+	  	from 
+	  		${database}.${tableName}  
+	  	where 
+	  		1 = 1
+	  			and ${priKey} = #{priValue}
+	</select>
+	<insert id="addData" parameterType="java.util.Map">
+		insert into ${map['database']}.${map['tableName']} (
+			<foreach collection="map.keys" item="item" separator=",">
+				<if test="item!='database' and item!='tableName'">
+					${item}
+				</if>
+			</foreach>
+		)values(
+			<foreach collection="map.keys" item="item" separator=",">
+				<if test="item!='database' and item!='tableName'">
+					#{map[${item}] }
+				</if>
+			</foreach>
+		)
+	</insert>
+	<update id="updateData" parameterType="java.util.Map">
+		update 
+			${map['database']}.${map['tableName']} 
+		set
+			<foreach collection="map.keys" item="item" separator=",">
+				<if test="item!='database' and item!='tableName' and item!='_pri_key_' and item!='_pri_value_'">
+					${item} = #{map[${item}] }
+				</if>
+			</foreach>
+		where 
+			${map['_pri_key_']} = #{map[_pri_value_]}
+	</update>
+	<delete id="deleteData" parameterType="String">
+		delete from  
+			${database}.${tableName} 
+		where 
+			${priKey} = #{priValue}
+	</delete>
+</mapper>

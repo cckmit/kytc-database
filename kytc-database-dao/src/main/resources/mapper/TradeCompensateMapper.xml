@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kytc.database.dao.mapper.TradeCompensateMapper">
+    <resultMap id="BaseResultMap" type="com.kytc.database.dao.data.TradeCompensateData">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="service_name" jdbcType="VARCHAR" property="serviceName" />
+        <result column="business" jdbcType="VARCHAR" property="business" />
+        <result column="business_id" jdbcType="VARCHAR" property="businessId" />
+        <result column="request" jdbcType="VARCHAR" property="request" />
+        <result column="url" jdbcType="VARCHAR" property="url" />
+        <result column="method" jdbcType="VARCHAR" property="method" />
+        <result column="current_count" jdbcType="TINYINT" property="currentCount" />
+        <result column="max_retry_count" jdbcType="TINYINT" property="maxRetryCount" />
+        <result column="retry_interval" jdbcType="TINYINT" property="retryInterval" />
+        <result column="success_code" jdbcType="VARCHAR" property="successCode" />
+        <result column="need_retry" jdbcType="VARCHAR" property="needRetry" />
+        <result column="remark" jdbcType="VARCHAR" property="remark" />
+        <result column="created_by" jdbcType="VARCHAR" property="createdBy" />
+        <result column="created_at" jdbcType="DATE" property="createdAt" />
+        <result column="updated_by" jdbcType="VARCHAR" property="updatedBy" />
+        <result column="updated_at" jdbcType="DATE" property="updatedAt" />
+    </resultMap>
+    <sql id="Base_Column_List">
+        id,service_name,business,business_id,request,url,method,current_count,max_retry_count,
+        retry_interval,success_code,need_retry,remark,created_by,created_at,updated_by,updated_at,
+        last_updated_at
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from t_trade_compensate
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+        delete from t_trade_compensate
+        where id = #{id,jdbcType=BIGINT}
+    </delete>
+    <insert id="insert" parameterType="com.kytc.database.dao.data.TradeCompensateData">
+        insert into t_trade_compensate (
+        id,service_name,business,business_id,request,url,method,current_count,max_retry_count,retry_interval,success_code,need_retry,remark,
+        created_by,created_at,updated_by,updated_at
+        )
+        values (
+        #{id,jdbcType=BIGINT},#{serviceName,jdbcType=VARCHAR},#{business,jdbcType=VARCHAR},#{businessId,jdbcType=VARCHAR},
+        #{request,jdbcType=VARCHAR},#{url,jdbcType=VARCHAR},#{method,jdbcType=VARCHAR},#{currentCount,jdbcType=TINYINT},
+        #{maxRetryCount,jdbcType=TINYINT},#{retryInterval,jdbcType=TINYINT},#{successCode,jdbcType=VARCHAR},#{needRetry,jdbcType=VARCHAR},
+        #{remark,jdbcType=VARCHAR},#{createdBy,jdbcType=VARCHAR},#{createdAt,jdbcType=DATE},#{updatedBy,jdbcType=VARCHAR},
+        #{updatedAt,jdbcType=DATE}
+        )
+    </insert>
+    <insert id="insertSelective" parameterType="com.kytc.database.dao.data.TradeCompensateData">
+        insert into t_op_activity_check
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="serviceName != null">
+                service_name,
+            </if>
+            <if test="business != null">
+                business,
+            </if>
+            <if test="businessId != null">
+                business_id,
+            </if>
+            <if test="request != null">
+                request,
+            </if>
+            <if test="url != null">
+                url,
+            </if>
+            <if test="method != null">
+                method,
+            </if>
+            <if test="currentCount != null">
+                current_count,
+            </if>
+            <if test="maxRetryCount != null">
+                max_retry_count,
+            </if>
+            <if test="retryInterval != null">
+                retry_interval,
+            </if>
+            <if test="successCode != null">
+                success_code,
+            </if>
+            <if test="needRetry != null">
+                need_retry,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="createdBy != null">
+                created_by,
+            </if>
+            <if test="createdAt != null">
+                created_at,
+            </if>
+            <if test="updatedBy != null">
+                updated_by,
+            </if>
+            <if test="updatedAt != null">
+                updated_at,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="serviceName != null">
+                #{serviceName,jdbcType=VARCHAR},
+            </if>
+            <if test="business != null">
+                #{business,jdbcType=VARCHAR},
+            </if>
+            <if test="businessId != null">
+                #{businessId,jdbcType=VARCHAR},
+            </if>
+            <if test="request != null">
+                #{request,jdbcType=VARCHAR},
+            </if>
+            <if test="url != null">
+                #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="method != null">
+                #{method,jdbcType=VARCHAR},
+            </if>
+            <if test="currentCount != null">
+                #{currentCount,jdbcType=TINYINT},
+            </if>
+            <if test="maxRetryCount != null">
+                #{maxRetryCount,jdbcType=TINYINT},
+            </if>
+            <if test="retryInterval != null">
+                #{retryInterval,jdbcType=TINYINT},
+            </if>
+            <if test="successCode != null">
+                #{successCode,jdbcType=VARCHAR},
+            </if>
+            <if test="needRetry != null">
+                #{needRetry,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createdBy != null">
+                #{createdBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                #{createdAt,jdbcType=DATE},
+            </if>
+            <if test="updatedBy != null">
+                #{updatedBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedAt != null">
+                #{updatedAt,jdbcType=DATE},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.kytc.database.dao.data.TradeCompensateData">
+        update t_trade_compensate
+        <set>
+            <if test="serviceName != null">
+                service_name = #{serviceName,jdbcType=VARCHAR},
+            </if>
+            <if test="business != null">
+                business = #{business,jdbcType=VARCHAR},
+            </if>
+            <if test="businessId != null">
+                business_id = #{businessId,jdbcType=VARCHAR},
+            </if>
+            <if test="request != null">
+                request = #{request,jdbcType=VARCHAR},
+            </if>
+            <if test="url != null">
+                url = #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="method != null">
+                method = #{method,jdbcType=VARCHAR},
+            </if>
+            <if test="currentCount != null">
+                current_count = #{currentCount,jdbcType=TINYINT},
+            </if>
+            <if test="maxRetryCount != null">
+                max_retry_count = #{maxRetryCount,jdbcType=TINYINT},
+            </if>
+            <if test="retryInterval != null">
+                retry_interval = #{retryInterval,jdbcType=TINYINT},
+            </if>
+            <if test="successCode != null">
+                success_code = #{successCode,jdbcType=VARCHAR},
+            </if>
+            <if test="needRetry != null">
+                need_retry = #{needRetry,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="createdBy != null">
+                created_by = #{createdBy,jdbcType=VARCHAR},
+            </if>
+            <if test="createdAt != null">
+                created_at = #{createdAt,jdbcType=DATE},
+            </if>
+            <if test="updatedBy != null">
+                updated_by = #{updatedBy,jdbcType=VARCHAR},
+            </if>
+            <if test="updatedAt != null">
+                updated_at = #{updatedAt,jdbcType=DATE},
+            </if>
+        </set>
+        <where>
+            id = #{id,jdbcType=BIGINT},
+        </where>
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.kytc.database.dao.data.TradeCompensateData">
+        update t_trade_compensate
+        set
+        id = #{id,jdbcType=BIGINT},
+        service_name = #{serviceName,jdbcType=VARCHAR},
+        business = #{business,jdbcType=VARCHAR},
+        business_id = #{businessId,jdbcType=VARCHAR},
+        request = #{request,jdbcType=VARCHAR},
+        url = #{url,jdbcType=VARCHAR},
+        method = #{method,jdbcType=VARCHAR},
+        current_count = #{currentCount,jdbcType=TINYINT},
+        max_retry_count = #{maxRetryCount,jdbcType=TINYINT},
+        retry_interval = #{retryInterval,jdbcType=TINYINT},
+        success_code = #{successCode,jdbcType=VARCHAR},
+        need_retry = #{needRetry,jdbcType=VARCHAR},
+        remark = #{remark,jdbcType=VARCHAR},
+        created_by = #{createdBy,jdbcType=VARCHAR},
+        created_at = #{createdAt,jdbcType=DATE},
+        updated_by = #{updatedBy,jdbcType=VARCHAR},
+        updated_at = #{updatedAt,jdbcType=DATE},
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>
