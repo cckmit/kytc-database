@@ -35,17 +35,17 @@ public class ServiceAnalyzer implements Analyzer{
         List<String> list = new ArrayList<>();
         list.add("package "+pkg+".server.service;\n");
         list.add("import "+pkg+".request."+DatabaseUtils.getRequestClass(tableName)+";");
+        list.add("import "+pkg+".request."+DatabaseUtils.getSearchRequestClass(tableName)+";");
         list.add("import "+pkg+".response."+DatabaseUtils.getResponseClass(tableName)+";");
         list.add("import com.kytc.framework.web.common.BasePageResponse;\n");
         list.add("\npublic interface "+DatabaseUtils.getServiceClass(tableName)+" {");
-        list.add("\n\tboolean add("+DatabaseUtils.getRequestClass(tableName)+" request);");
+        String line = "\n\tBasePageResponse<"+ DatabaseUtils.getResponseClass(tableName)+"> listByCondition(";
+        line += "\n\t\t"+ DatabaseUtils.getSearchRequestClass(tableName)+" request );";
+        list.add(line);
+        list.add("\n\tLong add("+DatabaseUtils.getRequestClass(tableName)+" request);");
         list.add("\n\tboolean update("+DatabaseUtils.getRequestClass(tableName)+" request);");
         list.add("\n\t"+DatabaseUtils.getResponseClass(tableName)+" detail(Long id);");
         list.add("\n\tboolean delete(Long id);");
-        String line = "\n\tBasePageResponse<"+ DatabaseUtils.getResponseClass(tableName)+"> listByCondition(";
-        line += "\n\t\t"+ DatabaseUtils.getRequestClass(tableName)+" request,";
-        line+="\n\t\tint page,\n\t\tint pageSize);";
-        list.add(line);
         list.add("}");
         return list;
     }

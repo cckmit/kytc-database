@@ -38,6 +38,7 @@ public class ApiImplAnalyzer implements Analyzer{
         List<String> list = new ArrayList<>();
         list.add("package "+pkg+".server.api.impl;\n");
         list.add("import "+pkg+".request."+ DatabaseUtils.getRequestClass(tableName)+";");
+        list.add("import "+pkg+".request."+ DatabaseUtils.getSearchRequestClass(tableName)+";");
         list.add("import "+pkg+".response."+ DatabaseUtils.getResponseClass(tableName)+";");
         list.add("import "+pkg+".api."+ DatabaseUtils.getApiClass(tableName)+";");
         list.add("import "+pkg+".server.service."+ DatabaseUtils.getServiceClass(tableName)+";");
@@ -55,15 +56,12 @@ public class ApiImplAnalyzer implements Analyzer{
         list.add("\tprivate final "+ DatabaseUtils.getServiceClass(tableName)+" "+ DatabaseUtils.getServiceName(tableName)+";");
         list.add("\n\t@Override");
         list.add("\tpublic BasePageResponse<"+ DatabaseUtils.getResponseClass(tableName)+"> listByCondition(\n\t\t" +
-                "@RequestBody @Valid "+DatabaseUtils.getRequestClass(tableName) + " request,");
-        list.add("\t\t@RequestParam(\"index\")int page,");
-        list.add("\t\t@RequestParam(\"pageSize\")int pageSize){");
-        String line = "\treturn this."+ DatabaseUtils.getServiceName(tableName)+".listByCondition( request,";
-        line += "page, pageSize);";
+                "@RequestBody @Valid "+DatabaseUtils.getSearchRequestClass(tableName) + " request){");
+        String line = "\treturn this."+ DatabaseUtils.getServiceName(tableName)+".listByCondition( request );";
         list.add("\t\t"+line);
         list.add("\t}");
         list.add("\n\t@Override");
-        list.add("\tpublic boolean add(@RequestBody @Valid "+ DatabaseUtils.getRequestClass(tableName)+" request) {");
+        list.add("\tpublic Long add(@RequestBody @Valid "+ DatabaseUtils.getRequestClass(tableName)+" request) {");
         list.add("\t\treturn this."+ DatabaseUtils.getServiceName(tableName)+".add(request);");
         list.add("\t}");
         list.add("\n\t@Override");

@@ -1,8 +1,6 @@
 package com.kytc.database.server.impl.analyzer;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.kytc.database.response.ColumnResponse;
@@ -10,11 +8,9 @@ import com.kytc.database.server.config.NameContant;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
 import com.kytc.database.server.utils.DatabaseUtils;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 /**
  * <a style="display:none">简单描述</a>.
@@ -45,6 +41,7 @@ public class ApiAnalyzer implements Analyzer{
         List<String> list = new ArrayList<>();
         list.add("package "+pkg+".api;\n");
         list.add("import "+pkg+".request."+ DatabaseUtils.getRequestClass(tableName)+";");
+        list.add("import "+pkg+".request."+ DatabaseUtils.getSearchRequestClass(tableName)+";");
         list.add("import "+pkg+".response."+ DatabaseUtils.getResponseClass(tableName)+";\n");
         list.add("import com.kytc.framework.web.common.BasePageResponse;");
         list.add("import org.springframework.web.bind.annotation.*;");
@@ -57,13 +54,11 @@ public class ApiAnalyzer implements Analyzer{
         list.add("\n\t@ApiOperation(\"查询"+description+"列表\")");
         list.add("\t@PostMapping(\"/infos\")");
         list.add("\tBasePageResponse<"+ DatabaseUtils.getResponseClass(tableName)+"> listByCondition(");
-        list.add("\t\t@RequestBody "+ DatabaseUtils.getRequestClass(tableName)+" request,");
-        list.add("\t\t@RequestParam(\"page\")int page,");
-        list.add("\t\t@RequestParam(\"pageSize\")int pageSize);");
+        list.add("\t\t@RequestBody "+ DatabaseUtils.getSearchRequestClass(tableName)+" request );");
 
         list.add("\n\t@ApiOperation(\"添加"+description+"数据\")");
         list.add("\t@PostMapping(\"/info\")");
-        list.add("\tboolean add(@RequestBody @Valid "+ DatabaseUtils.getRequestClass(tableName)+" request);");
+        list.add("\tLong add(@RequestBody @Valid "+ DatabaseUtils.getRequestClass(tableName)+" request);");
         list.add("\n\t@ApiOperation(\"修改"+description+"数据\")");
         list.add("\t@PutMapping(\"/info\")");
         list.add("\tboolean update(@RequestBody @Valid "+ DatabaseUtils.getRequestClass(tableName)+" request);");

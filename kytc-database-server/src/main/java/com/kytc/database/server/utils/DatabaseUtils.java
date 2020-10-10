@@ -48,6 +48,15 @@ public class DatabaseUtils {
         return "on update CURRENT_TIMESTAMP".equalsIgnoreCase(columnResponse.getExtra());
     }
 
+    public static ColumnResponse getPriColumn(List<ColumnResponse> columnResponses){
+        for( ColumnResponse columnResponse : columnResponses ){
+            if( isPriKey(columnResponse) ){
+                return columnResponse;
+            }
+        }
+        return null;
+    }
+
     private static String getName(String name){
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(name.substring(0,1).toUpperCase()).append(name.substring(1));
@@ -152,6 +161,9 @@ public class DatabaseUtils {
     }
     public static String getRequestClass(String tableName){
         return getDTOName(tableName)+ NameContant.DATABASE_REQUEST;
+    }
+    public static String getSearchRequestClass(String tableName){
+        return getDTOName(tableName)+ NameContant.DATABASE_SEARCH_REQUEST;
     }
     public static String getRequestName(String tableName){
         return getAttributeName(tableName)+ NameContant.DATABASE_REQUEST;

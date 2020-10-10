@@ -15,6 +15,7 @@ package com.kytc.database.server.config;
 public class NameContant {
     public final static String DATABASE_RESPONSE = "Response";
     public final static String DATABASE_REQUEST = "Request";
+    public final static String DATABASE_SEARCH_REQUEST = "SearchRequest";
     public final static String DATABASE_DATA = "Data";
     public final static String DATABASE_API = "Api";
     public final static String DATABASE_API_IMPL = "ApiImpl";

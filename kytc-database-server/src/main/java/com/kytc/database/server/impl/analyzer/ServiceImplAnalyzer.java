@@ -39,12 +39,16 @@ public class ServiceImplAnalyzer implements Analyzer{
         String dataClass = DatabaseUtils.getDataClass(tableName);
         String dataName = DatabaseUtils.getDataName(tableName);
         String mapperExName = DatabaseUtils.getMapperExName(tableName);
+        ColumnResponse priColumn = DatabaseUtils.getPriColumn(columnResponses);
         List<String> list = new ArrayList<>();
         list.add("package "+pkg+".server.impl;\n");
+        list.add("import com.kytc.framework.exception.BaseErrorCodeEnum;\n" +
+                "import com.kytc.framework.exception.BaseException;");
         list.add("import com.kytc.framework.web.common.BasePageResponse;");
         list.add("import com.kytc.framework.web.utils.BeanUtils;");
         list.add("import "+pkg+".server.service."+DatabaseUtils.getServiceClass(tableName)+";");
         list.add("import "+pkg+".request."+DatabaseUtils.getRequestClass(tableName)+";");
+        list.add("import "+pkg+".request."+DatabaseUtils.getSearchRequestClass(tableName)+";");
         list.add("import "+pkg+".response."+DatabaseUtils.getResponseClass(tableName)+";");
         list.add("import "+pkg+".dao.data."+DatabaseUtils.getDataClass(tableName)+";");
         list.add("import "+pkg+".dao.mapper."+DatabaseUtils.getMapperExClass(tableName)+";");
@@ -58,14 +62,15 @@ public class ServiceImplAnalyzer implements Analyzer{
         list.add("public class "+DatabaseUtils.getServiceImplClass(tableName)+" implements "+DatabaseUtils.getServiceClass(tableName)+" {");
         list.add("\tprivate final "+DatabaseUtils.getMapperExClass(tableName)+" "+DatabaseUtils.getMapperExName(tableName)+";");
         list.add("\n\t@Override");
-        list.add("\tpublic boolean add("+requestClass+" request){");
-        list.add("\t\tif( null != request ){");
-        list.add("\t\t\t"+dataClass+" "+dataName+" = BeanUtils.convert(request, "+dataClass+".class);");
-        list.add("\t\t\t"+dataName+".setCreatedAt(new Date());");
-        list.add("\t\t\t"+dataName+".setUpdatedAt(new Date());");
-        list.add("\t\t\treturn this."+mapperExName+".insert("+dataName+")>0;");
+        list.add("\tpublic Long add("+requestClass+" request){");
+        list.add("\t\t"+dataClass+" "+dataName+" = BeanUtils.convert(request, "+dataClass+".class);");
+        list.add("\t\t"+dataName+".setCreatedAt(new Date());");
+        list.add("\t\t"+dataName+".setUpdatedAt(new Date());");
+        list.add("\t\tthis."+mapperExName+".insert("+dataName+");");
+        list.add("\t\tif(null == "+dataName+"."+DatabaseUtils.getJavaMethod(priColumn.getColumnName())+"()){");
+        list.add("\t\t\tthrow new BaseErrorCodeEnum.SYSTEM_ERROR,\"添加失败\");");
         list.add("\t\t}");
-        list.add("\t\treturn false;");
+        list.add("\t\treturn "+dataName+"."+DatabaseUtils.getJavaMethod(priColumn.getColumnName())+"();");
         list.add("\t}");
         list.add("\n\t@Override");
         list.add("\tpublic boolean update("+requestClass+" request){");
@@ -84,12 +89,6 @@ public class ServiceImplAnalyzer implements Analyzer{
         list.add("\t\t}");
         list.add("\t\treturn BeanUtils.convert("+dataName+","+responseClass+".class);");
         list.add("\t}");
-        ColumnResponse priColumn = null;
-        for(ColumnResponse columnResponse:columnResponses){
-            if( DatabaseUtils.isPriKey(columnResponse) ){
-                priColumn = columnResponse;
-            }
-        }
         list.add("\n\t@Override");
         list.add("\tpublic boolean delete(Long id){");
         if(DatabaseUtils.isRealDelete(columnResponses)){
@@ -103,29 +102,29 @@ public class ServiceImplAnalyzer implements Analyzer{
         }
         list.add("\t}");
         list.add("\n\t@Override");
-        list.add("\tpublic BasePageResponse<"+ responseClass +"> listByCondition("+DatabaseUtils.getRequestClass(tableName)+" request,int page, int pageSize){");
+        list.add("\tpublic BasePageResponse<"+ responseClass +"> listByCondition( "+DatabaseUtils.getSearchRequestClass(tableName)+" request ){");
         String column = "";
         for(ColumnResponse columnResponse:columnResponses){
             String name = DatabaseUtils.getJavaName(columnResponse.getColumnName());
-            if(Arrays.asList("id","createdAt","createdBy","updatedAt","updatedBy","lastUpdatedAt").contains(name)){
+            if(Arrays.asList("createdAt","createdBy","updatedAt","updatedBy","lastUpdatedAt","isDeleted").contains(name)){
                 continue;
             }
             column+= "request."+DatabaseUtils.getJavaMethod(columnResponse.getColumnName())+"(), ";
         }
         list.add("\t\tBasePageResponse<"+responseClass+"> pageResponse = new BasePageResponse<>();");
-        list.add("\t\tpageResponse.setRows(this.listByConditionData(request,page, pageSize));");
+        list.add("\t\tpageResponse.setRows(this.listByConditionData( request ));");
         if(column.endsWith(", ")){
             column = column.substring(0,column.length()-2);
         }
-        list.add("\t\tpageResponse.setTotal(this.countByConditionData(request));");
-        list.add("\t\tpageResponse.setPage(page);");
-        list.add("\t\tpageResponse.setPageSize(pageSize);");
+        list.add("\t\tpageResponse.setTotal(this.countByConditionData( request ));");
+        list.add("\t\tpageResponse.setPage(request.getPage());");
+        list.add("\t\tpageResponse.setPageSize(request.getPageSize());");
         list.add("\t\treturn pageResponse;");
         list.add("\t}");
 
-        list.add("\n\tprivate List<"+responseClass+"> listByConditionData("+DatabaseUtils.getRequestClass(tableName)+" request,int page,int pageSize){");
-        list.add("\t\tint start = page * pageSize;");
-        list.add("\t\tList<"+dataClass+"> list =  this."+mapperExName+".listByCondition("+column+", start, pageSize);");
+        list.add("\n\tprivate List<"+responseClass+"> listByConditionData( "+DatabaseUtils.getRequestClass(tableName)+" request ){");
+        list.add("\t\trequest.init();");
+        list.add("\t\tList<"+dataClass+"> list =  this."+mapperExName+".listByCondition("+column+", request.getStart(), request.getLimit());");
         list.add("\t\treturn BeanUtils.convert(list,"+responseClass+".class);");
         list.add("\t}");
         list.add("\n");

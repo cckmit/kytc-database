@@ -41,7 +41,7 @@ public class MapperExImplAnalyzer implements Analyzer{
                 "\t\t<where>");
         for(ColumnResponse columnResponse:columnResponses) {
             String name = DatabaseUtils.getJavaName(columnResponse.getColumnName());
-            if (Arrays.asList("id", "createdAt", "createdBy", "updatedAt", "updatedBy", "lastUpdatedAt").contains(name)) {
+            if (Arrays.asList("createdAt", "createdBy", "updatedAt", "updatedBy", "lastUpdatedAt","isDeleted").contains(name)) {
                 continue;
             }
             list.add("\t\t\t<if test=\"" + name + " != null \">");
@@ -59,7 +59,7 @@ public class MapperExImplAnalyzer implements Analyzer{
         list.add("\t\tfrom "+tableName+"");
         list.add("\t\t<include refid=\"queryCondition\"></include>");
         list.add("\t\torder by updated_at desc");
-        list.add("\t\tlimit #{start},#{limit}");
+        list.add("\t\t<if test=\"limit > 0\">\n\t\t\tlimit #{start},#{limit}\n\t\t</if>");
         list.add("\t</select>");
         list.add("\t<select id=\"countByCondition\" resultType=\"Long\">");
         list.add("\t\tselect");

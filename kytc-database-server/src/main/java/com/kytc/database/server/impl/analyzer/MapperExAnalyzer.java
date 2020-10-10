@@ -39,7 +39,7 @@ public class MapperExAnalyzer implements Analyzer{
         String line = "";
         for(ColumnResponse columnResponse:columnResponses){
             String name = DatabaseUtils.getJavaName(columnResponse.getColumnName());
-            if(Arrays.asList("id","createdAt","createdBy","updatedAt","updatedBy","lastUpdatedAt").contains(name)){
+            if(Arrays.asList("createdAt","createdBy","updatedAt","updatedBy","lastUpdatedAt").contains(name)){
                 continue;
             }
             line+= DatabaseUtils.getJavaType(columnResponse.getDataType()) +" " +DatabaseUtils.getJavaName(columnResponse.getColumnName())+", ";

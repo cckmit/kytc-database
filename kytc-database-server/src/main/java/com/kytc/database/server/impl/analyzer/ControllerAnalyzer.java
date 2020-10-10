@@ -44,6 +44,7 @@ public class ControllerAnalyzer implements Analyzer{
         List<String> list = new ArrayList<>();
         list.add("package "+pkg+".hub.server.controller;\n");
         list.add("import "+pkg+".request."+ DatabaseUtils.getRequestClass(tableName)+";");
+        list.add("import "+pkg+".request."+ DatabaseUtils.getSearchRequestClass(tableName)+";");
         list.add("import "+pkg+".response."+ DatabaseUtils.getResponseClass(tableName)+";\n");
         list.add("import com.kytc.framework.web.common.BasePageResponse;");
         list.add("import com.kytc.framework.web.common.BaseResponse;");
@@ -64,15 +65,13 @@ public class ControllerAnalyzer implements Analyzer{
         list.add("\n\t@ApiOperation(\"查询"+description+"列表\")");
         list.add("\t@PostMapping(\"/infos\")");
         list.add("\tpublic BaseResponse<BasePageResponse<"+ DatabaseUtils.getResponseClass(tableName)+">> listByCondition(");
-        list.add("\t\t@RequestBody @Valid "+ DatabaseUtils.getRequestClass(tableName)+" request,");
-        list.add("\t\t@RequestParam(\"page\")int page,");
-        list.add("\t\t@RequestParam(\"pageSize\")int pageSize){");
-        list.add("\t\treturn BaseResponse.success(this."+DatabaseUtils.getApiName(tableName)+".listByCondition(request,page,pageSize));");
+        list.add("\t\t@RequestBody @Valid "+ DatabaseUtils.getSearchRequestClass(tableName)+" request){");
+        list.add("\t\treturn BaseResponse.success(this."+DatabaseUtils.getApiName(tableName)+".listByCondition(request));");
         list.add("\t}");
 
         list.add("\n\t@ApiOperation(\"添加"+description+"数据\")");
         list.add("\t@PostMapping(\"/info\")");
-        list.add("\tpublic BaseResponse<Boolean> add(@RequestBody @Valid "+ DatabaseUtils.getRequestClass(tableName)+" request){");
+        list.add("\tpublic BaseResponse<Integer> add(@RequestBody @Valid "+ DatabaseUtils.getRequestClass(tableName)+" request){");
         list.add("\t\treturn BaseResponse.success(this."+DatabaseUtils.getApiName(tableName)+".add(request));");
         list.add("\t}");
         list.add("\n\t@ApiOperation(\"修改"+description+"数据\")");
