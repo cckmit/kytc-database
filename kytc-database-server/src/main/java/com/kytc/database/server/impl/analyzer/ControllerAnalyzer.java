@@ -90,8 +90,8 @@ public class ControllerAnalyzer implements Analyzer{
         list.add("\t\treturn BaseResponse.success(this."+DatabaseUtils.getApiName(tableName)+".delete(id));");
         list.add("\t}");
 
-        if(!CollectionUtils.isEmpty(columnMap) && columnMap.containsKey(true)){
-            Map<String,List<ColumnIndexDTO>> map = columnMap.get(true);
+        if(!CollectionUtils.isEmpty(columnMap) && columnMap.containsKey(false)){
+            Map<String,List<ColumnIndexDTO>> map = columnMap.get(false);
             for(String key:map.keySet()){
                 List<ColumnIndexDTO> columnIndexDTOList = map.get(key);
                 if(columnIndexDTOList.size()==1){

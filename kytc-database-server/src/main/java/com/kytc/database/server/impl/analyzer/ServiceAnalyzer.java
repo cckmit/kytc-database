@@ -51,8 +51,8 @@ public class ServiceAnalyzer implements Analyzer{
         list.add("\n\tboolean update("+DatabaseUtils.getRequestClass(tableName)+" request);");
         list.add("\n\t"+DatabaseUtils.getResponseClass(tableName)+" detail(Long id);");
         list.add("\n\tboolean delete(Long id);");
-        if(!CollectionUtils.isEmpty(columnMap) && columnMap.containsKey(true)){
-            Map<String,List<ColumnIndexDTO>> map = columnMap.get(true);
+        if(!CollectionUtils.isEmpty(columnMap) && columnMap.containsKey(false)){
+            Map<String,List<ColumnIndexDTO>> map = columnMap.get(false);
             for(String key:map.keySet()){
                 List<ColumnIndexDTO> columnIndexDTOList = map.get(key);
                 if(columnIndexDTOList.size()==1){
@@ -65,8 +65,8 @@ public class ServiceAnalyzer implements Analyzer{
                     ColumnResponse columnResponse = columnResponses.stream().filter(columnResponse1 -> columnResponse1.getColumnName().equalsIgnoreCase(columnIndexDTO.getColumn_name())).findFirst().get();
                     line1+=" "+DatabaseUtils.getJavaType(columnResponse.getDataType())+" "+DatabaseUtils.getJavaName(columnResponse.getColumnName())+",";
                 }
-                line1 = line1.substring(0,line.length()-1);
-                list.add("\tboolean delete("+line1+");");
+                line1 = line1.substring(0,line1.length()-1);
+                list.add("\n\tboolean delete("+line1+" );");
             }
         }
         list.add("}");

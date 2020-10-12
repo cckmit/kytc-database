@@ -42,13 +42,17 @@ public class RequestAnalyzer implements Analyzer{
         list.add("import lombok.Data;");
         list.add("import io.swagger.annotations.ApiModel;");
         list.add("import io.swagger.annotations.ApiModelProperty;");
-        list.add("\nimport java.io.Serializable;");
+        list.add("\nimport javax.validation.constraints.NotNull;");
+        list.add("import java.io.Serializable;");
         list.add("import java.util.Date;");
         list.add("\n@Data");
         list.add("@ApiModel(\""+description+" request\")");
         list.add("public class "+ DatabaseUtils.getRequestClass(tableName)+" implements Serializable {");
         list.add("\tprivate static final long serialVersionUID = 1L;");
         for(ColumnResponse columnResponse:columnResponses){
+            if("NO".equals(columnResponse.getNullable())&&!DatabaseUtils.isAutoIncrement(columnResponse)){
+                list.add("@NotNull(\""+columnResponse.getColumnComment()+"\"不能为空)");
+            }
             list.add("\t@ApiModelProperty(\""+columnResponse.getColumnComment()+"\")");
             list.add("\tprivate "+ DatabaseUtils.getJavaType(columnResponse.getColumnType())+" "+ DatabaseUtils.getJavaName(columnResponse.getColumnName())+";");
         }

@@ -72,8 +72,8 @@ public class MapperExImplAnalyzer implements Analyzer{
         list.add("\t\tfrom "+tableName+"");
         list.add("\t\t<include refid=\"queryCondition\"></include>");
         list.add("\t</select>");
-        if(!CollectionUtils.isEmpty(columnMap) && columnMap.containsKey(true)){
-            Map<String,List<ColumnIndexDTO>> map = columnMap.get(true);
+        if(!CollectionUtils.isEmpty(columnMap) && columnMap.containsKey(false)){
+            Map<String,List<ColumnIndexDTO>> map = columnMap.get(false);
             for(String key:map.keySet()){
                 List<ColumnIndexDTO> columnIndexDTOList = map.get(key);
                 if(columnIndexDTOList.size()==1){
@@ -87,25 +87,28 @@ public class MapperExImplAnalyzer implements Analyzer{
                 for(ColumnIndexDTO columnIndexDTO:columnIndexDTOList){
                     ColumnResponse columnResponse = columnResponses.stream().filter(columnResponse1 -> columnResponse1.getColumnName().equalsIgnoreCase(columnIndexDTO.getColumn_name())).findFirst().get();
                     line1+=" "+DatabaseUtils.getJavaType(columnResponse.getDataType())+" "+DatabaseUtils.getJavaName(columnResponse.getColumnName())+",";
-                    column += DatabaseUtils.getDataClass(columnResponse.getColumnName())+"And";
-                    whereStr += "\nAND"+columnResponse.getColumnName()+" = #{"+DatabaseUtils.getJavaName(columnResponse.getColumnName())+",jdbcType="+DatabaseUtils.getMapperDataType(columnResponse.getDataType())+"} ";
+                    column += DatabaseUtils.getDTOName(columnResponse.getColumnName())+"And";
+                    whereStr += "\n\t\tAND "+columnResponse.getColumnName()+" = #{"+DatabaseUtils.getJavaName(columnResponse.getColumnName())+",jdbcType="+DatabaseUtils.getMapperDataType(columnResponse.getDataType())+"} ";
                 }
                 line1 = line1.substring(0,line1.length()-1);
                 column = column.substring(0,column.length()-3);
                 whereStr = whereStr.substring(whereStr.indexOf("AND")+3);
-                list.add("\t<delete id=\"deleteBy"+column+"\">");
                 if(DatabaseUtils.isRealDelete(columnResponses)){
+                    list.add("\t<delete id=\"deleteBy"+column+"\">");
                     list.add("\t\tdelete from "+tableName);
+                    list.add("\t\twhere "+whereStr);
+                    list.add("\t</delete>");
                 }else{
+                    list.add("\t<update id=\"deleteBy"+column+"\">");
                     list.add("\t\tupdate "+tableName+"\n\t\tset is_deleted = 0");
+                    list.add("\t\twhere "+whereStr);
+                    list.add("\t</update>");
                 }
-                list.add("\t\twhere"+whereStr);
-                list.add("\t<delete>");
                 list.add("\t<select id=\"getBy"+column+"\" resultMap=\""+pkg+".dao.mapper."+DatabaseUtils.getMapperClass(tableName)+".BaseResultMap\">");
                 list.add("\t\tselect");
                 list.add("\t\t\t<include refid=\""+pkg+".dao.mapper."+DatabaseUtils.getMapperClass(tableName)+".Base_Column_List\"></include>");
                 list.add("\t\tfrom "+tableName+"");
-                list.add("\t\twhere"+whereStr);
+                list.add("\t\twhere "+whereStr);
                 list.add("\t\tlimit 1");
                 list.add("\t</select>");
             }

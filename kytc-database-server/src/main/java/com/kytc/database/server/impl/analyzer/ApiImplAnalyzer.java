@@ -81,8 +81,8 @@ public class ApiImplAnalyzer implements Analyzer{
         list.add("\tpublic "+ DatabaseUtils.getResponseClass(tableName)+" detail(@PathVariable(\"id\") Long id) {");
         list.add("\t\treturn this."+ DatabaseUtils.getServiceName(tableName)+".detail(id);");
         list.add("\t}");
-        if(!CollectionUtils.isEmpty(columnMap) && columnMap.containsKey(true)){
-            Map<String,List<ColumnIndexDTO>> map = columnMap.get(true);
+        if(!CollectionUtils.isEmpty(columnMap) && columnMap.containsKey(false)){
+            Map<String,List<ColumnIndexDTO>> map = columnMap.get(false);
             for(String key:map.keySet()){
                 List<ColumnIndexDTO> columnIndexDTOList = map.get(key);
                 if(columnIndexDTOList.size()==1){
@@ -100,7 +100,7 @@ public class ApiImplAnalyzer implements Analyzer{
                 }
                 line1 = line1.substring(0,line1.length()-1);
                 column = column.substring(0,column.length()-1);
-                list.add("\tboolean delete("+line1+"){");
+                list.add("\tpublic boolean delete("+line1+"){");
                 list.add("\t\treturn this."+DatabaseUtils.getServiceName(tableName)+".delete("+column+");\n\t}");
             }
         }

@@ -56,8 +56,8 @@ public class MapperExAnalyzer implements Analyzer{
         list.add("\npublic interface "+DatabaseUtils.getMapperExClass(tableName)+" extends "+DatabaseUtils.getMapperClass(tableName)+" {");
         list.add("\n\tList<"+DatabaseUtils.getDataClass(tableName)+"> listByCondition("+line+"int start, int limit);");
         list.add("\n\tLong countByCondition("+line.substring(0,line.length()-2)+");");
-        if(!CollectionUtils.isEmpty(columnMap) && columnMap.containsKey(true)){
-            Map<String,List<ColumnIndexDTO>> map = columnMap.get(true);
+        if(!CollectionUtils.isEmpty(columnMap) && columnMap.containsKey(false)){
+            Map<String,List<ColumnIndexDTO>> map = columnMap.get(false);
             for(String key:map.keySet()){
                 List<ColumnIndexDTO> columnIndexDTOList = map.get(key);
                 if(columnIndexDTOList.size()==1){
@@ -70,11 +70,11 @@ public class MapperExAnalyzer implements Analyzer{
                 for(ColumnIndexDTO columnIndexDTO:columnIndexDTOList){
                     ColumnResponse columnResponse = columnResponses.stream().filter(columnResponse1 -> columnResponse1.getColumnName().equalsIgnoreCase(columnIndexDTO.getColumn_name())).findFirst().get();
                     line1+=" "+DatabaseUtils.getJavaType(columnResponse.getDataType())+" "+DatabaseUtils.getJavaName(columnResponse.getColumnName())+",";
-                    column += DatabaseUtils.getDataClass(columnResponse.getColumnName())+"And";
+                    column += DatabaseUtils.getDTOName(columnResponse.getColumnName())+"And";
                 }
                 line1 = line1.substring(0,line1.length()-1);
                 column = column.substring(0,column.length()-3);
-                list.add("\n\tInteger delete("+line1+");");
+                list.add("\n\tInteger deleteBy"+column+"("+line1+");");
 
                 list.add("\n\t"+DatabaseUtils.getDataClass(tableName)+" getBy"+column+"("+line1+");");
             }

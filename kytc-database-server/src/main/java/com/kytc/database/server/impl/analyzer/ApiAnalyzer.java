@@ -75,8 +75,8 @@ public class ApiAnalyzer implements Analyzer{
         list.add("\n\t@ApiOperation(\"查询"+description+"详情\")");
         list.add("\t@GetMapping(\"/{id}\")");
         list.add("\t"+ DatabaseUtils.getResponseClass(tableName)+" detail(@PathVariable(\"id\")Long id);");
-        if(!CollectionUtils.isEmpty(columnMap) && columnMap.containsKey(true)){
-            Map<String,List<ColumnIndexDTO>> map = columnMap.get(true);
+        if(!CollectionUtils.isEmpty(columnMap) && columnMap.containsKey(false)){
+            Map<String,List<ColumnIndexDTO>> map = columnMap.get(false);
             for(String key:map.keySet()){
                 List<ColumnIndexDTO> columnIndexDTOList = map.get(key);
                 if(columnIndexDTOList.size()==1){

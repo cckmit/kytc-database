@@ -1,8 +1,12 @@
 package com.kytc.database.server.impl;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
 import com.kytc.database.dao.dto.TableDTO;
@@ -25,6 +29,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -58,7 +63,23 @@ public class TableServiceImpl implements TableService {
 		page.setRows( tableMapper.dataList(vo) );
 		return page;
 	}
-
+	private Map<Boolean,Map<String,List<ColumnIndexDTO>>> convert(List<ColumnIndexDTO> columnIndexDTOList){
+		Map<Boolean,Map<String,List<ColumnIndexDTO>>> columnMap = new HashMap<>();
+		if(CollectionUtils.isEmpty(columnIndexDTOList)){
+			return columnMap;
+		}
+		for( ColumnIndexDTO columnIndexDTO : columnIndexDTOList ){
+			if( !columnMap.containsKey(columnIndexDTO.isNon_unique()) ){
+				columnMap.put(columnIndexDTO.isNon_unique(),new HashMap<>());
+			}
+			Map<String,List<ColumnIndexDTO>> map = columnMap.get(columnIndexDTO.isNon_unique());
+			if( !map.containsKey(columnIndexDTO.getKey_name()) ){
+				map.put(columnIndexDTO.getKey_name(),new ArrayList<>());
+			}
+			map.get(columnIndexDTO.getKey_name()).add(columnIndexDTO);
+		}
+		return columnMap;
+	}
 	@Override
 	public void export(String database, String tableName,String pkg,String description,
 						 HttpServletResponse response) {
@@ -66,7 +87,7 @@ public class TableServiceImpl implements TableService {
 		List<Map<String,Object>> indexColums = this.dynamicService.select(database,"show index from "+tableName);
 		List<ColumnIndexDTO> columnIndexDTOList = JSON.parseArray(JSON.toJSONString(indexColums), ColumnIndexDTO.class);
 		for(Analyzer analyzer : analyzerHelper.getAnalyzer()){
-			List<String> res = analyzer.analyzer(pkg,tableName,list,description);
+			List<String> res = analyzer.analyzer(pkg,tableName,list,this.convert(columnIndexDTOList),description);
 			String path = analyzer.getFilePath(pkg,tableName);
 			String name = analyzer.getFileName(tableName);
 			System.out.println("D:"+File.separator+"database"+ File.separator+path+File.separator+name);

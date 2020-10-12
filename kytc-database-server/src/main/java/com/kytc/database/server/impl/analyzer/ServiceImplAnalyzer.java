@@ -72,7 +72,7 @@ public class ServiceImplAnalyzer implements Analyzer{
         list.add("\t\t"+dataName+".setUpdatedAt(new Date());");
         list.add("\t\tthis."+mapperExName+".insert("+dataName+");");
         list.add("\t\tif(null == "+dataName+"."+DatabaseUtils.getJavaMethod(priColumn.getColumnName())+"()){");
-        list.add("\t\t\tthrow new BaseErrorCodeEnum.SYSTEM_ERROR,\"添加失败\");");
+        list.add("\t\t\tthrow new BaseException(BaseErrorCodeEnum.SYSTEM_ERROR,\"添加失败\");");
         list.add("\t\t}");
         list.add("\t\treturn "+dataName+"."+DatabaseUtils.getJavaMethod(priColumn.getColumnName())+"();");
         list.add("\t}");
@@ -126,18 +126,18 @@ public class ServiceImplAnalyzer implements Analyzer{
         list.add("\t\treturn pageResponse;");
         list.add("\t}");
 
-        list.add("\n\tprivate List<"+responseClass+"> listByConditionData( "+DatabaseUtils.getRequestClass(tableName)+" request ){");
+        list.add("\n\tprivate List<"+responseClass+"> listByConditionData( "+DatabaseUtils.getSearchRequestClass(tableName)+" request ){");
         list.add("\t\trequest.init();");
         list.add("\t\tList<"+dataClass+"> list =  this."+mapperExName+".listByCondition("+column+", request.getStart(), request.getLimit());");
         list.add("\t\treturn BeanUtils.convert(list,"+responseClass+".class);");
         list.add("\t}");
         list.add("\n");
-        list.add("\tprivate Long countByConditionData("+DatabaseUtils.getRequestClass(tableName)+" request){" );
+        list.add("\tprivate Long countByConditionData("+DatabaseUtils.getSearchRequestClass(tableName)+" request){" );
         list.add("\t\treturn this."+mapperExName+".countByCondition("+column+");");
         list.add("\t}");
 
-        if(!CollectionUtils.isEmpty(columnMap) && columnMap.containsKey(true)){
-            Map<String,List<ColumnIndexDTO>> map = columnMap.get(true);
+        if(!CollectionUtils.isEmpty(columnMap) && columnMap.containsKey(false)){
+            Map<String,List<ColumnIndexDTO>> map = columnMap.get(false);
             for(String key:map.keySet()){
                 List<ColumnIndexDTO> columnIndexDTOList = map.get(key);
                 if(columnIndexDTOList.size()==1){
@@ -148,15 +148,18 @@ public class ServiceImplAnalyzer implements Analyzer{
                 list.add("\n\t@Override");
                 String line1 = "";
                 String column1 = "";
+                String methodName = "";
                 for(ColumnIndexDTO columnIndexDTO:columnIndexDTOList){
                     ColumnResponse columnResponse = columnResponses.stream().filter(columnResponse1 -> columnResponse1.getColumnName().equalsIgnoreCase(columnIndexDTO.getColumn_name())).findFirst().get();
                     line1+=" "+DatabaseUtils.getJavaType(columnResponse.getDataType())+" "+DatabaseUtils.getJavaName(columnResponse.getColumnName())+",";
-                    column+=DatabaseUtils.getJavaName(columnResponse.getColumnName())+",";
+                    column1+=DatabaseUtils.getJavaName(columnResponse.getColumnName())+",";
+                    methodName += "AND"+DatabaseUtils.getDTOName(columnResponse.getColumnName());
                 }
+                methodName = methodName.substring(methodName.indexOf("AND")+3);
                 line1 = line1.substring(0,line1.length()-1);
                 column1 = column1.substring(0,column1.length()-1);
                 list.add("\tpublic boolean delete("+line1+"){");
-                list.add("\t\treturn this."+DatabaseUtils.getMapperExName(tableName)+".delete("+column1+");\n\t}");
+                list.add("\t\treturn this."+DatabaseUtils.getMapperExName(tableName)+".deleteBy"+methodName+"("+column1+")>0;\n\t}");
             }
         }
         list.add("}");
