@@ -3,7 +3,9 @@ package com.kytc.database.server.impl.analyzer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
+import com.kytc.database.server.dto.ColumnIndexDTO;
 import org.apache.tools.ant.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,7 +36,8 @@ public class MapperImplAnalyzer implements Analyzer{
         analyzerHelper.putAnalyzer(this);
     }
     @Override
-    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,String description) {
+    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
+                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
         List<String> list = new ArrayList<>();
         list.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">\n" +

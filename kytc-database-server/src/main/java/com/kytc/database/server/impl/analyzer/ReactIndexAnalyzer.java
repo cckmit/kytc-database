@@ -4,8 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import com.kytc.database.response.ColumnResponse;
+import com.kytc.database.server.dto.ColumnIndexDTO;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
 import com.kytc.database.server.utils.DatabaseUtils;
@@ -39,7 +41,8 @@ public class ReactIndexAnalyzer implements Analyzer{
         return tableName;
     }
     @Override
-    public List<String> analyzer(String pkg,String tableName, List<ColumnResponse> columnResponses,String description) {
+    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
+                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
         String loading = getLoading(tableName);
         String dtoName = DatabaseUtils.getDTOName(tableName);
         List<String> list = new ArrayList<>();

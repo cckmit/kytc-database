@@ -2,15 +2,20 @@ package com.kytc.database.server.impl.analyzer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.kytc.database.response.ColumnResponse;
 import com.kytc.database.server.config.NameContant;
+import com.kytc.database.server.dto.ColumnIndexDTO;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
 import com.kytc.database.server.utils.DatabaseUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 /**
  * <a style="display:none">简单描述</a>.
@@ -37,8 +42,10 @@ public class ApiAnalyzer implements Analyzer{
         return "/"+tableName.replaceAll("_","/");
     }
     @Override
-    public List<String> analyzer(String pkg,String tableName, List<ColumnResponse> columnResponses,String description) {
+    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
+                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
         List<String> list = new ArrayList<>();
+        ColumnResponse priColumn = DatabaseUtils.getPriColumn(columnResponses);
         list.add("package "+pkg+".api;\n");
         list.add("import "+pkg+".request."+ DatabaseUtils.getRequestClass(tableName)+";");
         list.add("import "+pkg+".request."+ DatabaseUtils.getSearchRequestClass(tableName)+";");
@@ -68,6 +75,26 @@ public class ApiAnalyzer implements Analyzer{
         list.add("\n\t@ApiOperation(\"查询"+description+"详情\")");
         list.add("\t@GetMapping(\"/{id}\")");
         list.add("\t"+ DatabaseUtils.getResponseClass(tableName)+" detail(@PathVariable(\"id\")Long id);");
+        if(!CollectionUtils.isEmpty(columnMap) && columnMap.containsKey(true)){
+            Map<String,List<ColumnIndexDTO>> map = columnMap.get(true);
+            for(String key:map.keySet()){
+                List<ColumnIndexDTO> columnIndexDTOList = map.get(key);
+                if(columnIndexDTOList.size()==1){
+                    if( columnIndexDTOList.get(0).getColumn_name().equalsIgnoreCase(priColumn.getColumnName()) ){
+                        continue;
+                    }
+                }
+                list.add("\n\t@ApiOperation(\"根据唯一索引删除"+description+"数据\")");
+                list.add("\t@DeleteMapping(\"/info\")");
+                String line = "";
+                for(ColumnIndexDTO columnIndexDTO:columnIndexDTOList){
+                    ColumnResponse columnResponse = columnResponses.stream().filter(columnResponse1 -> columnResponse1.getColumnName().equalsIgnoreCase(columnIndexDTO.getColumn_name())).findFirst().get();
+                    line+="@RequestParam(\""+DatabaseUtils.getJavaName(columnResponse.getColumnName())+"\") "+DatabaseUtils.getJavaType(columnResponse.getDataType())+" "+DatabaseUtils.getJavaName(columnResponse.getColumnName())+",";
+                }
+                line = line.substring(0,line.length()-1);
+                list.add("\tboolean delete("+line+");");
+            }
+        }
         list.add("}");
         return list;
     }

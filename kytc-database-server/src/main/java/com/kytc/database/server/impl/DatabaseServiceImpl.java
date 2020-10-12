@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor(onConstructor_={@Autowired})
 public class DatabaseServiceImpl implements DatabaseService {
 	private final DatabaseMapper databaseMapper;
+	@Override
 	public List<String> list() {
 		// TODO Auto-generated method stub
 		return databaseMapper.list();

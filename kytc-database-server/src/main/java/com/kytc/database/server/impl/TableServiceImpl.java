@@ -4,14 +4,17 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
 import com.kytc.database.dao.dto.TableDTO;
 import com.kytc.database.dao.mapper.TableMapper;
 import com.kytc.database.dao.vo.TableVO;
 import com.kytc.database.request.TableRequest;
 import com.kytc.database.response.ColumnResponse;
 import com.kytc.database.response.TableResponse;
+import com.kytc.database.server.dto.ColumnIndexDTO;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ColumnService;
+import com.kytc.database.server.service.DynamicService;
 import com.kytc.database.server.service.TableService;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
 import com.kytc.framework.common.utils.TxtUtils;
@@ -33,6 +36,7 @@ public class TableServiceImpl implements TableService {
 	private final TableMapper tableMapper;
 	private final AnalyzerHelper analyzerHelper;
 	private final ColumnService columnService;
+	private final DynamicService dynamicService;
 	@Override
 	public List<String> list(String database) {
 		// TODO Auto-generated method stub
@@ -59,6 +63,8 @@ public class TableServiceImpl implements TableService {
 	public void export(String database, String tableName,String pkg,String description,
 						 HttpServletResponse response) {
 		List<ColumnResponse> list = this.columnService.list(database, tableName);
+		List<Map<String,Object>> indexColums = this.dynamicService.select(database,"show index from "+tableName);
+		List<ColumnIndexDTO> columnIndexDTOList = JSON.parseArray(JSON.toJSONString(indexColums), ColumnIndexDTO.class);
 		for(Analyzer analyzer : analyzerHelper.getAnalyzer()){
 			List<String> res = analyzer.analyzer(pkg,tableName,list,description);
 			String path = analyzer.getFilePath(pkg,tableName);
