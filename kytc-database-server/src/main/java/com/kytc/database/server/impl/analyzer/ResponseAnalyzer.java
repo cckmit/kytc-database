@@ -1,6 +1,7 @@
 package com.kytc.database.server.impl.analyzer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -52,6 +53,9 @@ public class ResponseAnalyzer implements Analyzer{
         list.add("public class "+ DatabaseUtils.getDTOName(tableName)+ NameContant.DATABASE_RESPONSE+" implements Serializable {");
         list.add("\tprivate static final long serialVersionUID = 1L;");
         for(ColumnResponse columnResponse:columnResponses){
+            if(Arrays.asList("lastUpdatedAt","isDeleted").contains(columnResponse.getJavaName())){
+                continue;
+            }
             list.add("\t@ApiModelProperty(\""+columnResponse.getColumnComment()+"\")");
             list.add("\tprivate "+ columnResponse.getJavaType()+" "+ columnResponse.getJavaName()+";");
         }

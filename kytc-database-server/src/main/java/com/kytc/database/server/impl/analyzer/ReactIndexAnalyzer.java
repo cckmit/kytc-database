@@ -73,12 +73,15 @@ public class ReactIndexAnalyzer implements Analyzer{
                 DatabaseUtils.getTabs(3)+"payload: {");
 
         for(ColumnResponse columnResponse:columnResponses){
-            String name = DatabaseUtils.getJavaName(columnResponse.getColumnName());
+            String name = columnResponse.getJavaName();
             if(Arrays.asList("id","createdAt","createdBy","updatedAt","updatedBy","lastUpdatedAt").contains(name)){
                 continue;
             }
-            list.add(DatabaseUtils.getTabs(4)+ DatabaseUtils.getJavaName(columnResponse.getColumnName()).toLowerCase()+": form.getFieldValue('"+
-                    DatabaseUtils.getJavaName(columnResponse.getColumnName())+"'), ");
+            if(columnResponse.getColumnType().toLowerCase().contains("text")){
+                continue;
+            }
+            list.add(DatabaseUtils.getTabs(4)+ columnResponse.getJavaName().toLowerCase()+": form.getFieldValue('"+
+                    columnResponse.getJavaName()+"'), ");
         }
 
         list.add(DatabaseUtils.getTabs(4)+"pageindex: 0,\n" +
@@ -148,7 +151,13 @@ public class ReactIndexAnalyzer implements Analyzer{
                 DatabaseUtils.getTabs(2)+"const { "+loading+": { data,pageindex, pagesize,pagination } } = this.props;\n" +
                 DatabaseUtils.getTabs(2)+"const columns = [");
         for(ColumnResponse columnResponse:columnResponses){
-            String name = DatabaseUtils.getJavaName(columnResponse.getColumnName());
+            if(columnResponse.getColumnType().toLowerCase().contains("text")){
+                continue;
+            }
+            if(Arrays.asList("id","createdAt","createdBy","updatedAt","updatedBy","lastUpdatedAt","isDeleted").contains(columnResponse.getJavaName())){
+                continue;
+            }
+            String name = columnResponse.getJavaName();
             String comment = (""+columnResponse.getColumnComment()).trim()+" "+name;
             comment = comment.trim();
             if(comment.contains(" ")){

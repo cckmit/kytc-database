@@ -36,12 +36,6 @@ public class ReactDetailAnalyzer implements Analyzer{
     public ReactDetailAnalyzer(AnalyzerHelper analyzerHelper){
         analyzerHelper.putAnalyzer(this);
     }
-    private String getLoading(String tableName){
-        if(tableName.toLowerCase().startsWith("t_")){
-            tableName = tableName.substring(2).toLowerCase();
-        }
-        return tableName;
-    }
 
     @Override
     public List<String> analyzer(AnalyzerDTO analyzerDTO) {

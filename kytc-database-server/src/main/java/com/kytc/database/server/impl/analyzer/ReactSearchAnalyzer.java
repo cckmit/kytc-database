@@ -81,7 +81,10 @@ public class ReactSearchAnalyzer implements Analyzer{
 
         for(ColumnResponse columnResponse:columnResponses){
             String name = DatabaseUtils.getJavaName(columnResponse.getColumnName());
-            if(Arrays.asList("id","createdAt","createdBy","updatedAt","updatedBy","lastUpdatedAt").contains(name)){
+            if(Arrays.asList("id","createdAt","createdBy","updatedAt","updatedBy","lastUpdatedAt","isDeleted").contains(name)){
+                continue;
+            }
+            if(columnResponse.getColumnType().toLowerCase().contains("text")){
                 continue;
             }
             String comment = (""+columnResponse.getColumnComment()).trim()+" "+name;
