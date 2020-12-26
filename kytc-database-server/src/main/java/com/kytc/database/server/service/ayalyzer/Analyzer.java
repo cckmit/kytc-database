@@ -1,13 +1,10 @@
 package com.kytc.database.server.service.ayalyzer;
 
-import com.kytc.database.dao.dto.ColumnDTO;
-import com.kytc.database.response.ColumnResponse;
-import com.kytc.database.server.dto.ColumnIndexDTO;
+import com.kytc.database.server.dto.AnalyzerDTO;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 /**
  * <a style="display:none">简单描述</a>.
@@ -21,7 +18,7 @@ import java.util.Map;
  * @see <a target="_blank" href="">参考文档</a>
  **/
 public interface Analyzer {
-    List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses, Map<Boolean,Map<String,List<ColumnIndexDTO>>> columnMap, String description);
+    List<String> analyzer(AnalyzerDTO analyzerDTO);
 
     String getFileName(String tableName);
 

@@ -1,17 +1,12 @@
 package com.kytc.database.server.impl.analyzer;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import com.kytc.database.dao.dto.ColumnDTO;
-import com.kytc.database.response.ColumnResponse;
-import com.kytc.database.server.dto.ColumnIndexDTO;
+import com.kytc.database.server.dto.AnalyzerDTO;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
 import com.kytc.database.server.utils.DatabaseUtils;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -42,8 +37,9 @@ public class ReactServiceAnalyzer implements Analyzer{
     }
 
     @Override
-    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
-                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
+    public List<String> analyzer(AnalyzerDTO analyzerDTO) {
+        String pkg = analyzerDTO.getPkg();
+        String tableName = analyzerDTO.getTableName();
         String loading = getLoading(tableName);
         String dtoName = DatabaseUtils.getDTOName(tableName);
         List<String> list = new ArrayList<>();

@@ -6,14 +6,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.kytc.database.dao.dto.ColumnDTO;
 import com.kytc.database.response.ColumnResponse;
-import com.kytc.database.server.config.NameContant;
+import com.kytc.database.server.dto.AnalyzerDTO;
 import com.kytc.database.server.dto.ColumnIndexDTO;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
 import com.kytc.database.server.utils.DatabaseUtils;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,15 +36,21 @@ public class MapperExAnalyzer implements Analyzer{
         analyzerHelper.putAnalyzer(this);
     }
     @Override
-    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
-                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
+    public List<String> analyzer(AnalyzerDTO analyzerDTO) {
+        List<ColumnResponse> columnResponses = analyzerDTO.getColumnResponses();
+        String pkg = analyzerDTO.getPkg();
+        String tableName = analyzerDTO.getTableName();
+        Map<Boolean, Map<String, java.util.List<ColumnIndexDTO>>> columnMap = analyzerDTO.getColumnMap();
         String line = "";
         for(ColumnResponse columnResponse:columnResponses){
-            String name = DatabaseUtils.getJavaName(columnResponse.getColumnName());
+            String name = columnResponse.getJavaName();
             if(Arrays.asList("createdAt","createdBy","updatedAt","updatedBy","lastUpdatedAt").contains(name)){
                 continue;
             }
-            line+= DatabaseUtils.getJavaType(columnResponse.getDataType()) +" " +DatabaseUtils.getJavaName(columnResponse.getColumnName())+", ";
+            if( columnResponse.getColumnType().toLowerCase().contains("text") ){
+                continue;
+            }
+            line+= columnResponse.getJavaType() +" " +columnResponse.getJavaName()+", ";
         }
         ColumnResponse priColumn = DatabaseUtils.getPriColumn(columnResponses);
         List<String> list = new ArrayList<>();
@@ -69,7 +73,7 @@ public class MapperExAnalyzer implements Analyzer{
                 String column = "";
                 for(ColumnIndexDTO columnIndexDTO:columnIndexDTOList){
                     ColumnResponse columnResponse = columnResponses.stream().filter(columnResponse1 -> columnResponse1.getColumnName().equalsIgnoreCase(columnIndexDTO.getColumn_name())).findFirst().get();
-                    line1+=" "+DatabaseUtils.getJavaType(columnResponse.getDataType())+" "+DatabaseUtils.getJavaName(columnResponse.getColumnName())+",";
+                    line1+=" "+columnResponse.getJavaType()+" "+columnResponse.getJavaName()+",";
                     column += DatabaseUtils.getDTOName(columnResponse.getColumnName())+"And";
                 }
                 line1 = line1.substring(0,line1.length()-1);

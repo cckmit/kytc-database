@@ -3,9 +3,8 @@ package com.kytc.database.server.impl.analyzer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import com.kytc.database.server.dto.ColumnIndexDTO;
+import com.kytc.database.server.dto.AnalyzerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,8 +34,11 @@ public class SearchRequestAnalyzer implements Analyzer{
         analyzerHelper.putAnalyzer(this);
     }
     @Override
-    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
-                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
+    public List<String> analyzer(AnalyzerDTO analyzerDTO) {
+        List<ColumnResponse> columnResponses = analyzerDTO.getColumnResponses();
+        String pkg = analyzerDTO.getPkg();
+        String tableName = analyzerDTO.getTableName();
+        String description = analyzerDTO.getDescription();
         List<String> list = new ArrayList<>();
         list.add("package "+pkg+".request;\n");
         list.add("import lombok.Data;\n");
@@ -52,6 +54,9 @@ public class SearchRequestAnalyzer implements Analyzer{
         for(ColumnResponse columnResponse:columnResponses){
             String name = DatabaseUtils.getJavaName(columnResponse.getColumnName());
             if(Arrays.asList("createdAt","createdBy","updatedAt","updatedBy","lastUpdatedAt","isDeleted").contains(name)){
+                continue;
+            }
+            if(columnResponse.getColumnType().toLowerCase().contains("text")){
                 continue;
             }
             list.add("\t@ApiModelProperty(\""+columnResponse.getColumnComment()+"\")");

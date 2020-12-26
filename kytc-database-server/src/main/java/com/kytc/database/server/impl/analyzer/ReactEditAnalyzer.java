@@ -1,17 +1,14 @@
 package com.kytc.database.server.impl.analyzer;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import com.kytc.database.response.ColumnResponse;
-import com.kytc.database.server.dto.ColumnIndexDTO;
+import com.kytc.database.server.dto.AnalyzerDTO;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
 import com.kytc.database.server.utils.DatabaseUtils;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,8 +38,9 @@ public class ReactEditAnalyzer implements Analyzer{
         return tableName;
     }
     @Override
-    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
-                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
+    public List<String> analyzer(AnalyzerDTO analyzerDTO) {
+        List<ColumnResponse> columnResponses = analyzerDTO.getColumnResponses();
+        String tableName = analyzerDTO.getTableName();
         List<String> list = new ArrayList<>();
         list.add("import React from 'react';\n");
         list.add("import { Form, Input, Select,Modal, Row,Col} from 'antd';\n");

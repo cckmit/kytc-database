@@ -2,15 +2,12 @@ package com.kytc.database.server.impl.analyzer;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
-import com.kytc.database.server.dto.ColumnIndexDTO;
+import com.kytc.database.server.dto.AnalyzerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.kytc.database.response.ColumnResponse;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
 import com.kytc.database.server.utils.DatabaseUtils;
@@ -37,16 +34,9 @@ public class MapperAnalyzer implements Analyzer{
     }
     //MapperExAnalyzer
     @Override
-    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
-                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
-        String line = "";
-        for(ColumnResponse columnResponse:columnResponses){
-            String name = DatabaseUtils.getJavaName(columnResponse.getColumnName());
-            if(Arrays.asList("id","createdAt","createdBy","updatedAt","updatedBy","lastUpdatedAt").contains(name)){
-                continue;
-            }
-            line+= DatabaseUtils.getJavaType(columnResponse.getDataType()) +" " +DatabaseUtils.getJavaName(columnResponse.getColumnName())+", ";
-        }
+    public List<String> analyzer(AnalyzerDTO analyzerDTO) {
+        String pkg = analyzerDTO.getPkg();
+        String tableName = analyzerDTO.getTableName();
         List<String> list = new ArrayList<>();
         list.add("package "+pkg+".dao.mapper;\n");
         list.add("import "+pkg+".dao.data."+DatabaseUtils.getDataClass(tableName)+";\n");

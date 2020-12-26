@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.kytc.database.dao.dto.ColumnDTO;
 import com.kytc.database.response.ColumnResponse;
+import com.kytc.database.server.dto.AnalyzerDTO;
 import com.kytc.database.server.dto.ColumnIndexDTO;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
@@ -42,8 +43,8 @@ public class ReactModelsAnalyzer implements Analyzer{
     }
 
     @Override
-    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
-                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
+    public List<String> analyzer(AnalyzerDTO analyzerDTO) {
+        String tableName = analyzerDTO.getTableName();
         String loading = getLoading(tableName);
         String dtoName = DatabaseUtils.getDTOName(tableName);
         List<String> list = new ArrayList<>();

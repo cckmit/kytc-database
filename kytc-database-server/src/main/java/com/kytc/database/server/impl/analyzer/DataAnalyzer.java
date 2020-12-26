@@ -3,14 +3,12 @@ package com.kytc.database.server.impl.analyzer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import com.kytc.database.server.dto.ColumnIndexDTO;
+import com.kytc.database.server.dto.AnalyzerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.kytc.database.response.ColumnResponse;
-import com.kytc.database.server.config.NameContant;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
 import com.kytc.database.server.utils.DatabaseUtils;
@@ -36,8 +34,11 @@ public class DataAnalyzer implements Analyzer{
         analyzerHelper.putAnalyzer(this);
     }
     @Override
-    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
-                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
+    public List<String> analyzer(AnalyzerDTO analyzerDTO) {
+        List<ColumnResponse> columnResponses = analyzerDTO.getColumnResponses();
+        String pkg = analyzerDTO.getPkg();
+        String tableName = analyzerDTO.getTableName();
+        String description = analyzerDTO.getDescription();
         List<String> list = new ArrayList<>();
         list.add("package "+pkg+".dao.data;\n");
         list.add("import lombok.Data;");
@@ -48,8 +49,8 @@ public class DataAnalyzer implements Analyzer{
         list.add("public class "+ DatabaseUtils.getDataClass(tableName)+" implements Serializable {");
         list.add("\tprivate static final long serialVersionUID = 1L;");
         for(ColumnResponse columnResponse:columnResponses){
-            list.add("\tprivate "+ DatabaseUtils.getJavaType(columnResponse.getColumnType())+" "+
-                    DatabaseUtils.getJavaName(columnResponse.getColumnName())+";//"+columnResponse.getColumnComment());
+            list.add("\tprivate "+ columnResponse.getJavaType()+" "+
+                    columnResponse.getJavaName()+";//"+columnResponse.getColumnComment());
         }
         list.add("}");
         return list;

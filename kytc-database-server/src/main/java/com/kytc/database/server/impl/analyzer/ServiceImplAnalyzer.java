@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.kytc.database.response.ColumnResponse;
+import com.kytc.database.server.dto.AnalyzerDTO;
 import com.kytc.database.server.dto.ColumnIndexDTO;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
@@ -36,8 +37,11 @@ public class ServiceImplAnalyzer implements Analyzer{
         analyzerHelper.putAnalyzer(this);
     }
     @Override
-    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
-                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
+    public List<String> analyzer(AnalyzerDTO analyzerDTO) {
+        List<ColumnResponse> columnResponses = analyzerDTO.getColumnResponses();
+        String pkg = analyzerDTO.getPkg();
+        String tableName = analyzerDTO.getTableName();
+        Map<Boolean, Map<String, java.util.List<ColumnIndexDTO>>> columnMap = analyzerDTO.getColumnMap();
         String responseClass = DatabaseUtils.getResponseClass(tableName);
         String requestClass = DatabaseUtils.getRequestClass(tableName);
         String dataClass = DatabaseUtils.getDataClass(tableName);

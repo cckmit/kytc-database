@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.kytc.database.response.ColumnResponse;
 import com.kytc.database.server.config.NameContant;
+import com.kytc.database.server.dto.AnalyzerDTO;
 import com.kytc.database.server.dto.ColumnIndexDTO;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
@@ -14,8 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
 
 /**
  * <a style="display:none">简单描述</a>.
@@ -42,9 +41,13 @@ public class ApiAnalyzer implements Analyzer{
         return "/"+tableName.replaceAll("_","/");
     }
     @Override
-    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
-                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
+    public List<String> analyzer(AnalyzerDTO analyzerDTO) {
         List<String> list = new ArrayList<>();
+        String pkg = analyzerDTO.getPkg();
+        List<ColumnResponse> columnResponses = analyzerDTO.getColumnResponses();
+        String tableName = analyzerDTO.getTableName();
+        String description = analyzerDTO.getDescription();
+        Map<Boolean, Map<String, java.util.List<ColumnIndexDTO>>> columnMap = analyzerDTO.getColumnMap();
         ColumnResponse priColumn = DatabaseUtils.getPriColumn(columnResponses);
         list.add("package "+pkg+".api;\n");
         list.add("import "+pkg+".request."+ DatabaseUtils.getRequestClass(tableName)+";");

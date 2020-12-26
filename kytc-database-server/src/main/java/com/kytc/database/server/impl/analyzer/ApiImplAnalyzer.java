@@ -2,17 +2,15 @@ package com.kytc.database.server.impl.analyzer;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import com.kytc.database.dao.dto.ColumnDTO;
 import com.kytc.database.response.ColumnResponse;
+import com.kytc.database.server.dto.AnalyzerDTO;
 import com.kytc.database.server.dto.ColumnIndexDTO;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
 import com.kytc.database.server.utils.DatabaseUtils;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,8 +35,11 @@ public class ApiImplAnalyzer implements Analyzer{
         analyzerHelper.putAnalyzer(this);
     }
     @Override
-    public List<String> analyzer(String pkg,String tableName, List<ColumnResponse> columnResponses,
-                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap,String description) {
+    public List<String> analyzer(AnalyzerDTO analyzerDTO) {
+        List<ColumnResponse> columnResponses = analyzerDTO.getColumnResponses();
+        String pkg = analyzerDTO.getPkg();
+        String tableName = analyzerDTO.getTableName();
+        Map<Boolean, Map<String, java.util.List<ColumnIndexDTO>>> columnMap = analyzerDTO.getColumnMap();
         ColumnResponse priColumn = DatabaseUtils.getPriColumn(columnResponses);
         List<String> list = new ArrayList<>();
         list.add("package "+pkg+".server.api.impl;\n");
@@ -95,8 +96,8 @@ public class ApiImplAnalyzer implements Analyzer{
                 String column = "";
                 for(ColumnIndexDTO columnIndexDTO:columnIndexDTOList){
                     ColumnResponse columnResponse = columnResponses.stream().filter(columnResponse1 -> columnResponse1.getColumnName().equalsIgnoreCase(columnIndexDTO.getColumn_name())).findFirst().get();
-                    line1+="@RequestParam(\""+DatabaseUtils.getJavaName(columnResponse.getColumnName())+"\") "+DatabaseUtils.getJavaType(columnResponse.getDataType())+" "+DatabaseUtils.getJavaName(columnResponse.getColumnName())+",";
-                    column+=DatabaseUtils.getJavaName(columnResponse.getColumnName())+",";
+                    line1+="@RequestParam(\""+columnResponse.getJavaName()+"\") "+columnResponse.getJavaType()+" "+columnResponse.getJavaName()+",";
+                    column+=columnResponse.getJavaName()+",";
                 }
                 line1 = line1.substring(0,line1.length()-1);
                 column = column.substring(0,column.length()-1);

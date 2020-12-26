@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.kytc.database.response.ColumnResponse;
 import com.kytc.database.server.config.NameContant;
+import com.kytc.database.server.dto.AnalyzerDTO;
 import com.kytc.database.server.dto.ColumnIndexDTO;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
@@ -34,8 +35,11 @@ public class ResponseAnalyzer implements Analyzer{
         analyzerHelper.putAnalyzer(this);
     }
     @Override
-    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
-                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
+    public List<String> analyzer(AnalyzerDTO analyzerDTO) {
+        List<ColumnResponse> columnResponses = analyzerDTO.getColumnResponses();
+        String pkg = analyzerDTO.getPkg();
+        String tableName = analyzerDTO.getTableName();
+        String description = analyzerDTO.getDescription();
         List<String> list = new ArrayList<>();
         list.add("package "+pkg+".response;\n");
         list.add("import lombok.Data;");
@@ -49,7 +53,7 @@ public class ResponseAnalyzer implements Analyzer{
         list.add("\tprivate static final long serialVersionUID = 1L;");
         for(ColumnResponse columnResponse:columnResponses){
             list.add("\t@ApiModelProperty(\""+columnResponse.getColumnComment()+"\")");
-            list.add("\tprivate "+ DatabaseUtils.getJavaType(columnResponse.getColumnType())+" "+ DatabaseUtils.getJavaName(columnResponse.getColumnName())+";");
+            list.add("\tprivate "+ columnResponse.getJavaType()+" "+ columnResponse.getJavaName()+";");
         }
         list.add("}");
         return list;

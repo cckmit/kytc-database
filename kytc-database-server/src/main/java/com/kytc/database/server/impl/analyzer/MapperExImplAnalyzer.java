@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.kytc.database.response.ColumnResponse;
+import com.kytc.database.server.dto.AnalyzerDTO;
 import com.kytc.database.server.dto.ColumnIndexDTO;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
@@ -34,9 +35,11 @@ public class MapperExImplAnalyzer implements Analyzer{
         analyzerHelper.putAnalyzer(this);
     }
     @Override
-    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
-                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
-        String dtoName = DatabaseUtils.getDTOName(tableName);
+    public List<String> analyzer(AnalyzerDTO analyzerDTO) {
+        List<ColumnResponse> columnResponses = analyzerDTO.getColumnResponses();
+        String pkg = analyzerDTO.getPkg();
+        String tableName = analyzerDTO.getTableName();
+        Map<Boolean, Map<String, java.util.List<ColumnIndexDTO>>> columnMap = analyzerDTO.getColumnMap();
         List<String> list = new ArrayList<>();
         list.add("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<!DOCTYPE mapper PUBLIC \"-//mybatis.org//DTD Mapper 3.0//EN\" \"http://mybatis.org/dtd/mybatis-3-mapper.dtd\">\n" +
@@ -45,8 +48,11 @@ public class MapperExImplAnalyzer implements Analyzer{
                 "\t\t<where>");
         ColumnResponse priColumn = DatabaseUtils.getPriColumn(columnResponses);
         for(ColumnResponse columnResponse:columnResponses) {
-            String name = DatabaseUtils.getJavaName(columnResponse.getColumnName());
+            String name = columnResponse.getJavaName();
             if (Arrays.asList("createdAt", "createdBy", "updatedAt", "updatedBy", "lastUpdatedAt","isDeleted").contains(name)) {
+                continue;
+            }
+            if(columnResponse.getColumnType().toLowerCase().contains("text")){
                 continue;
             }
             list.add("\t\t\t<if test=\"" + name + " != null \">");
@@ -86,9 +92,9 @@ public class MapperExImplAnalyzer implements Analyzer{
                 String whereStr = "";
                 for(ColumnIndexDTO columnIndexDTO:columnIndexDTOList){
                     ColumnResponse columnResponse = columnResponses.stream().filter(columnResponse1 -> columnResponse1.getColumnName().equalsIgnoreCase(columnIndexDTO.getColumn_name())).findFirst().get();
-                    line1+=" "+DatabaseUtils.getJavaType(columnResponse.getDataType())+" "+DatabaseUtils.getJavaName(columnResponse.getColumnName())+",";
+                    line1+=" "+columnResponse.getJavaType()+" "+columnResponse.getJavaName()+",";
                     column += DatabaseUtils.getDTOName(columnResponse.getColumnName())+"And";
-                    whereStr += "\n\t\tAND "+columnResponse.getColumnName()+" = #{"+DatabaseUtils.getJavaName(columnResponse.getColumnName())+",jdbcType="+DatabaseUtils.getMapperDataType(columnResponse.getDataType())+"} ";
+                    whereStr += "\n\t\tAND "+columnResponse.getColumnName()+" = #{"+columnResponse.getJavaName()+",jdbcType="+DatabaseUtils.getMapperDataType(columnResponse.getDataType())+"} ";
                 }
                 line1 = line1.substring(0,line1.length()-1);
                 column = column.substring(0,column.length()-3);

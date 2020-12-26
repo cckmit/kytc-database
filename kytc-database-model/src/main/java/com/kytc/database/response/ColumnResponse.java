@@ -49,4 +49,6 @@ public class ColumnResponse implements Serializable {
 	private String privileges;
 	@ApiModelProperty("字段注释")
 	private String columnComment;
+	private String javaType;
+	private String javaName;
 }

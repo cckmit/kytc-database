@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.kytc.database.response.ColumnResponse;
+import com.kytc.database.server.dto.AnalyzerDTO;
 import com.kytc.database.server.dto.ColumnIndexDTO;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
@@ -34,8 +35,11 @@ public class ServiceAnalyzer implements Analyzer{
         analyzerHelper.putAnalyzer(this);
     }
     @Override
-    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
-                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
+    public List<String> analyzer(AnalyzerDTO analyzerDTO) {
+        List<ColumnResponse> columnResponses = analyzerDTO.getColumnResponses();
+        String pkg = analyzerDTO.getPkg();
+        String tableName = analyzerDTO.getTableName();
+        Map<Boolean, Map<String, java.util.List<ColumnIndexDTO>>> columnMap = analyzerDTO.getColumnMap();
         List<String> list = new ArrayList<>();
         ColumnResponse priColumn = DatabaseUtils.getPriColumn(columnResponses);
         list.add("package "+pkg+".server.service;\n");
@@ -63,7 +67,7 @@ public class ServiceAnalyzer implements Analyzer{
                 String line1 = "";
                 for(ColumnIndexDTO columnIndexDTO:columnIndexDTOList){
                     ColumnResponse columnResponse = columnResponses.stream().filter(columnResponse1 -> columnResponse1.getColumnName().equalsIgnoreCase(columnIndexDTO.getColumn_name())).findFirst().get();
-                    line1+=" "+DatabaseUtils.getJavaType(columnResponse.getDataType())+" "+DatabaseUtils.getJavaName(columnResponse.getColumnName())+",";
+                    line1+=" "+columnResponse.getJavaType()+" "+columnResponse.getJavaName()+",";
                 }
                 line1 = line1.substring(0,line1.length()-1);
                 list.add("\n\tboolean delete("+line1+" );");

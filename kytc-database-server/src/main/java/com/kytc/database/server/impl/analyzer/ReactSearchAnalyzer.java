@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.kytc.database.response.ColumnResponse;
+import com.kytc.database.server.dto.AnalyzerDTO;
 import com.kytc.database.server.dto.ColumnIndexDTO;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
@@ -41,8 +42,9 @@ public class ReactSearchAnalyzer implements Analyzer{
         return tableName;
     }
     @Override
-    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
-                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
+    public List<String> analyzer(AnalyzerDTO analyzerDTO) {
+        List<ColumnResponse> columnResponses = analyzerDTO.getColumnResponses();
+        String tableName = analyzerDTO.getTableName();
         List<String> list = new ArrayList<>();
         list.add("import React from 'react';\n");
         list.add("import { Card, Form, Input, Select, Icon,Button,Dropdown, InputNumber,Modal,message,Divider,Table, Row,Col} from 'antd';\n");

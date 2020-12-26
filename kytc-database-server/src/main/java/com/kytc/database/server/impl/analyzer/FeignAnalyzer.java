@@ -3,13 +3,11 @@ package com.kytc.database.server.impl.analyzer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import com.kytc.database.server.dto.ColumnIndexDTO;
+import com.kytc.database.server.dto.AnalyzerDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.kytc.database.response.ColumnResponse;
 import com.kytc.database.server.config.NameContant;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
@@ -42,8 +40,9 @@ public class FeignAnalyzer implements Analyzer{
         return "/"+tableName.replaceAll("_","/");
     }
     @Override
-    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
-                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
+    public List<String> analyzer(AnalyzerDTO analyzerDTO) {
+        String pkg = analyzerDTO.getPkg();
+        String tableName = analyzerDTO.getTableName();
         List<String> list = new ArrayList<>();
         list.add("package "+pkg+".hub.server.remote;\n");
         list.add("import "+pkg+".api."+ DatabaseUtils.getApiClass(tableName)+";");

@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.kytc.database.server.dto.AnalyzerDTO;
 import com.kytc.database.server.dto.ColumnIndexDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.kytc.database.response.ColumnResponse;
-import com.kytc.database.server.config.NameContant;
 import com.kytc.database.server.helper.AnalyzerHelper;
 import com.kytc.database.server.service.ayalyzer.Analyzer;
 import com.kytc.database.server.utils.DatabaseUtils;
@@ -43,8 +43,12 @@ public class ControllerAnalyzer implements Analyzer{
         return "/"+tableName.replaceAll("_","/");
     }
     @Override
-    public List<String> analyzer(String pkg, String tableName, List<ColumnResponse> columnResponses,
-                                 Map<Boolean, Map<String,List<ColumnIndexDTO>>> columnMap, String description) {
+    public List<String> analyzer(AnalyzerDTO analyzerDTO) {
+        List<ColumnResponse> columnResponses = analyzerDTO.getColumnResponses();
+        String pkg = analyzerDTO.getPkg();
+        String tableName = analyzerDTO.getTableName();
+        Map<Boolean, Map<String, java.util.List<ColumnIndexDTO>>> columnMap = analyzerDTO.getColumnMap();
+        String description = analyzerDTO.getDescription();
         List<String> list = new ArrayList<>();
         ColumnResponse priColumn = DatabaseUtils.getPriColumn(columnResponses);
         list.add("package "+pkg+".hub.server.controller;\n");
@@ -105,8 +109,8 @@ public class ControllerAnalyzer implements Analyzer{
                 String column = "";
                 for(ColumnIndexDTO columnIndexDTO:columnIndexDTOList){
                     ColumnResponse columnResponse = columnResponses.stream().filter(columnResponse1 -> columnResponse1.getColumnName().equalsIgnoreCase(columnIndexDTO.getColumn_name())).findFirst().get();
-                    line+="@RequestParam(\""+DatabaseUtils.getJavaName(columnResponse.getColumnName())+"\") "+DatabaseUtils.getJavaType(columnResponse.getDataType())+" "+DatabaseUtils.getJavaName(columnResponse.getColumnName())+",";
-                    column += DatabaseUtils.getJavaName(columnResponse.getColumnName())+",";
+                    line+="@RequestParam(\""+columnResponse.getJavaName()+"\") "+columnResponse.getJavaType()+" "+columnResponse.getJavaName()+",";
+                    column += columnResponse.getJavaName()+",";
                 }
                 line = line.substring(0,line.length()-1);
                 column = column.substring(0,column.length()-1);
